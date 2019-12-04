@@ -74,23 +74,23 @@ request(options, function (error, response, body) {
 
 ### 3. View Data
 
-GET endpoint route: `/api/getTerraPins`__
-GET endpoint routes: __
-`/api/OnCampus`, *__
-`/api/OffCampus`, *__
-`/api/Categories`, *__
-`/api/Categories/:subgroup`, *__
-`/api/Ranking`, *__
-`/api/Tags/`, *__
-`/api/Tags/:subgroup`, *__
-`/api/Users`, *__
-`/api/Random` *__
-POST endpoint routes:__
-`/api/create`, *__
-`/api/???`__
-DELETE endpoint routes:__
-`/api/???`,__
-`/api/???`__
+1. GET endpoint route: `/api/getTerraPins`
+2. GET endpoint routes: 
+`/api/OnCampus`, *
+`/api/OffCampus`, *
+`/api/Categories`, *
+`/api/Categories/:subgroup`, *
+`/api/Ranking`, *
+`/api/Tags/`, *
+`/api/Tags/:subgroup`, *
+`/api/Users`, *
+`/api/Random` *
+3. POST endpoint routes:
+`/api/create`, *
+`/api/???`
+4. DELETE endpoint routes:
+`/api/???`,
+`/api/???`
 
 ### 4. Search Data
 
