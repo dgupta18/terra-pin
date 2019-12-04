@@ -1,0 +1,48 @@
+{{#if filter}}
+<h2 style="margin-left: 10px">Explore: {{this.filter}}</h2>
+{{/if}}
+
+{{#if category}}
+    {{#each data}}
+        <a href="/Category/{{this}}" id="groupDisp">{{this}}</a>
+    {{/each}}
+{{/if}}
+
+{{#if tag}}
+    {{#each data}}
+        <a href="/Tag/{{this}}" id="groupDisp">{{this}}</a>
+    {{/each}}
+{{/if}}
+
+{{#if about}}
+    <div class="about-page">Welcome to TerraPin. Here, users can upload and browse TerraPins (hotspots) on and around UMD's campus. Each pin is categorized, and users can browse through categories or look at random new pins!</div>
+    <div class="about-page">Authors: Divya Gupta, Tiffany Tran, Anna Mazzanti</div>
+{{/if}}
+
+{{#unless navitem}}
+    {{#each data}}
+        <article id="displayCard">
+            {{!-- display picture --}}
+            <span id="displayLeft">
+                <div id="displayImg">
+                    <img src={{this.image}} />
+                </div>
+            </span>
+            {{!-- display other info --}}
+            <span id="displayRight">
+                <span id="pinName">{{this.name}}</span>
+                <div id="space"></div>
+                <span class="pinInfo">Uploaded by: {{this.user}}</span>
+                <div id="space"></div>
+                <span class="pinInfo">Length: {{this.ranking}} songs</span>
+                <div id="space"></div>
+                <span id="pinTags" class="pinInfo">Categories: {{this.tags}}<span>
+            </span>
+        </article>
+        <br>
+    {{else}}
+        <article style="padding-left: 10px;">
+            <h2>No pins yet - be the first to add one!</h2>
+        </article>
+    {{/each}}
+{{/unless}}

@@ -1,0 +1,189 @@
+/* Please add your own! */
+* {
+    font-family: "Open Sans";
+    font-weight: 550;
+    letter-spacing: .8px;
+}
+
+body {
+    background-color: #001020;
+}
+
+/************** NAVBAR **************/
+#nav {
+    margin: 15px 0px;
+    overflow: hidden;
+}
+
+#nav > a {
+    color: #A2BFD8;
+    text-decoration: none;
+    float: left;
+    text-align: center;
+    display: block;
+    padding: 8px 16px;
+    font-size: 16px;
+}
+
+#nav > a:hover {
+    background-color: #2E577C;
+}
+
+#search {
+    float: right;
+    padding: 8px 12px;
+    font-size: 14px;
+    width: 25%;
+    background-color: #E4F2FF
+}
+
+hr {
+    border: none;
+    background-color: #A2BFD8;
+    color: #A2BFD8;
+    height: .5px;
+}
+
+/********* MAIN.HANDLEBARS *********/
+#left {
+    float: left;
+    width: 75%;
+}
+
+#right {
+    float: right;
+    width: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+h2,h4 {
+    color: #A2BFD8;
+}
+
+#createNew {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 24px;
+    padding: 0px;
+    width: 30px;
+    height: 30px;
+    color: #001020;
+    background-color: #A2BFD8;
+}
+
+h3 {
+    color: #001020;
+}
+
+#displayCard p {
+    color: #001020;
+}
+
+/********* HOME.HANDLEBARS *********/
+#displayLeft {
+    float:left;
+    padding: 10px 10px;
+}
+
+#displayRight {
+    margin: 10px 10px;
+    color: #001020
+}
+
+#displayImg {
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+}
+
+#displayImg > img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#pinName {
+    font-size: 20px;
+}
+
+.pinName {
+    font-size: 14px;
+}
+
+#pinTags {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#displayCard {
+    background-color: #C2D5E6;
+    width: 75%;
+    margin: 10px 10px;
+    border-radius: .7%;
+    display: inline-block
+}
+
+#groupDisp {
+    margin: 10px 10px;
+    line-height: 60px;
+    padding: 10px 20px;
+    background-color: #8CB1D1;
+    color: #001020
+}
+
+span {
+    display: inline-block;
+}
+
+.about-page {
+    font-size: 16px;
+    /* color: #C2D5E6; */
+    color: #A2BFD8;
+}
+
+/******** CREATE.HANDLEBARS ********/
+#submitPin {
+    color: #001020;
+    background-color: #8CB1D1;
+    font-size: 16px;
+    border: none;
+    height: 30px;
+}
+
+#form {
+    background-color: #C2D5E6;
+    width: 65%;
+    margin: 10px 10px;
+    border-radius: .7%;
+    display: inline-block
+}
+
+#form > h1 {
+    color: #001020;
+    padding: 0px 25px;
+}
+
+#createForm {
+    padding: 0px 25px 25px;
+    line-height: 25px;
+}
+
+.input-field > input[type=text] {
+    border: none;
+    height: 20px;
+    padding-left: 5px;
+    font-size: 14px;
+    max-width: 100%;
+}
+
+.input-field > label {
+    font-size: 14px;
+}
+
+#space {
+    height: 14px;
+}

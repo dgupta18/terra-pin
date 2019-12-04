@@ -1,0 +1,52 @@
+form: {
+name: "Kung Fu Tea",
+onCampus: false,
+category: "food",
+tags: ["boba", "chill"],
+user: "Divya",
+image: "https://s3-media4.fl.yelpcdn.com/bphoto/R-39C7cpyh5nu7VK-pDdiQ/o.jpg",
+rating: 5
+}
+<article id="form">
+    <h1>Add a pin!</h1>
+    <form id="createForm" method="POST" action=/create>
+        <div class="input-field">
+            <label>Pin Name:</label><br>
+            <input type="text" name="name" size="50" placeholder="ex: Kung Fu Tea">
+        </div>
+        <div id="space"></div>
+        <div class="input-field">
+            <label>Is this on campus?</label><br>
+            <input type="radio" name="onCampus" value="true" checked>Yes&nbsp;
+            <input type="radio" name="onCampus" value="false">No<br>
+        </div>
+        <div class="input-field">
+            <label>Category:</label><br>
+            <input type="text" name="category" size="50" placeholder="ex: food">
+        </div>
+        <div id="space"></div>
+        <div class="input-field">
+            <label>Tags:</label><br>
+            <input type="text" name="tags" size="50" placeholder="ex: boba chill (separate with spaces)">
+        </div>
+        <div id="space"></div>
+        <div class="input-field">
+            <label>Your Name:</label><br>
+            <input type="text" name="user" size="50" placeholder="ex: Divya">
+        </div>
+        <div id="space"></div>
+        <div class="input-field">
+            <label>Link to image:</label><br>
+            <input type="text" name="image" size="100"
+                placeholder="ex: https://s3-media4.fl.yelpcdn.com/bphoto/R-39C7cpyh5nu7VK-pDdiQ/o.jpg">
+        </div>
+        <div id="space"></div>
+        <div class="input-field">
+            <label>Rating (out of 5):</label><br>
+            <input type="text" name="rating" size="50" placeholder="ex: 5">
+        </div>
+        <div id="space"></div>
+        <div id="space"></div>
+        <button id="submitPin" type="submit">Submit!</button>
+    </form>
+</article>

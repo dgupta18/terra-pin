@@ -1,0 +1,113 @@
+<div id="nav">
+    <a href="/" id="title">TerraPin</a>
+    <a href="/Categories">Categories</a>
+    <a href="/Ranking">Ranking</a>
+    <a href="/Tags">Tags</a>
+    <a href="/Random">Random</a>
+    <a href="/Create">Create</a>
+    <a href="/About">About</a>
+    {{#if onHome}}
+    <input id="search" type="text" placeholder="Search by name">
+    {{/if}}
+</div>
+<hr>
+
+<script>
+    function checkSearch(value) {
+        console.log("VALUE: " + value);
+        var url = "/search/" + value;
+        console.log("URL: " + url);
+
+        if (url === "/search/") {
+            $.get("api/getTerraPins", function(data){
+                $('#left').html("");
+                $.each(data, function (index, elem) {
+                    var campusTxt = ""
+                    if (elem.onCampus === "true") {
+                        campusTxt = "On-campus"
+                    } else {
+                        campusTxt = "Off-campus"
+                    }
+
+                    var card =
+                        `<article id="displayCard">
+                        {{!-- display picture --}}
+                        <span id="displayLeft">
+                            <div id="displayImg">
+                                <img src=${elem.image} />
+                            </div>
+                        </span>
+                        {{!-- display other info --}}
+                        <span id="displayRight">
+                            <span id="pinName">${elem.name} (${campusTxt})</span>
+                            <div id="space"></div>
+                            <span class="pinInfo">By: ${elem.user}</span>
+                            <div id="space"></div>
+                            <span class="pinInfo">Ranking: ${elem.ranking}</span>
+                            <div id="space"></div>
+                            <span class="pinInfo">Category: ${elem.category}</span>
+                            <div id="space"></div>
+                            <span id="pinTags" class="pinInfo">Moods: ${elem.tags}<span>
+                        </span>
+                    </article>
+                    <br>`;
+                    $('#left').append(card);
+                });
+
+                if ($('#left').html() == "") {
+                    var msg = `<article style="padding-left: 10px;">
+                                    <h2>No pins matched "${value}"</h2><h4>Try another search, or add a pin!</h4>
+                                </article>`
+                    $('#left').html(msg);
+                }
+            });
+        } else {
+            $.get(url, function (data) {
+                $('#left').html("");
+                $.each(data, function (index, elem) {
+                    var campusTxt = ""
+                    if (elem.onCampus === "true") {
+                        campusTxt = "On-campus"
+                    } else {
+                        campusTxt = "Off-campus"
+                    }
+
+                    var card =
+                        `<article id="displayCard">
+                        {{!-- display picture --}}
+                        <span id="displayLeft">
+                            <div id="displayImg">
+                                <img src=${elem.image} />
+                            </div>
+                        </span>
+                        {{!-- display other info --}}
+                        <span id="displayRight">
+                            <span id="pinName">${elem.name} (${campusTxt})</span>
+                            <div id="space"></div>
+                            <span class="pinInfo">By: ${elem.user}</span>
+                            <div id="space"></div>
+                            <span class="pinInfo">Ranking: ${elem.ranking}</span>
+                            <div id="space"></div>
+                            <span class="pinInfo">Category: ${elem.category}</span>
+                            <div id="space"></div>
+                            <span id="pinTags" class="pinInfo">Moods: ${elem.tags}<span>
+                        </span>
+                    </article>
+                    <br>`;
+                    $('#left').append(card);
+                });
+
+                if ($('#left').html() == "") {
+                    var msg = `<article style="padding-left: 10px;">
+                                    <h2>No pins yet - be the first to add one!</h2>
+                                </article>`
+                    $('#left').html(msg);
+                }
+            });
+        }
+    }
+
+    $('#search').keyup(function(event){
+        checkSearch(event.target.value);
+    });
+</script>
