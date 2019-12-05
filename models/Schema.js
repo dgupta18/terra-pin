@@ -44,13 +44,24 @@ var pinSchema = new mongoose.Schema({
     rating: {
         type: Number,
         required: true
-    }
+    },
+    reviews: [reviewSchema]
 });
 
-var Pin = mongoose.model('Movie', pinSchema);
+var groupPinsSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    pins: [String]
+});
+
+var GroupPins = mongoose.model('GroupPin', groupPinsSchema)
+var Pin = mongoose.model('Pin', pinSchema);
 var Review = mongoose.model('Review', reviewSchema);
 
 module.exports = {
     Pin: Pin,
-    Review: Review
+    Review: Review,
+    GroupPins: GroupPins
 }

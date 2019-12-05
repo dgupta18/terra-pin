@@ -1,11 +1,23 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var dotenv = require('dotenv');
 var logger = require('morgan');
 var exphbs = require('express-handlebars');
 var dataUtil = require("./data-util");
 var _ = require("underscore");
+var schema = require('./models/Schema');
+
+// Connect to MongoDB
+console.log(process.env.MONGODB)
+mongoose.connect(process.env.MONGODB);
+mongoose.connection.on('error', function () {
+    console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
+    process.exit(1);
+});
 
 // var _DATA = dataUtil.loadData().terraPins;
+dotenv.load();
 var _DATA = {}
 var app = express();
 
@@ -23,15 +35,15 @@ app.use('/public', express.static('public'));
 
 // NAV: home page
 app.get('/',function(req,res){
-  res.render('home', {
-    data: _DATA,
-    onHome: true,
-  });
+    res.render('home', {
+        data: _DATA,
+        onHome: true,
+    });
 });
 
 // API: get, get raw data
 app.get('/api/getTerraPins', function(req,res){
-  res.json(_DATA)
+    res.json(_DATA)
 });
 
 
@@ -39,40 +51,116 @@ app.get('/api/getTerraPins', function(req,res){
 // ************* CREATE *************
 // NAV: create pin (render)
 app.get("/create", function (req, res) {
-  res.render('create', {
-    onCreate: true,
-    onHome: false
-  });
+    res.render('create', {
+        onCreate: true,
+        nHome: false
+    });
 });
 
 // NAV: create pin (post req)
 app.post("/create", function (req, res) {
-  var body = req.body;
+    var body = req.body;
 
-  body.rating = parseInt(body.rating);
-  body.tags = body.tags.toString().split(" ");
-  body.onCampus = body.onCampus === "true";
+    var pin = new schema.Pin({
+        name: body.name,
+        onCampus: body.onCampus === "true",
+        category: body.category,
+        tags: body.tags,
+        user: body.user,
+        image: body.image,
+        rating: parseInt(body.rating),
+        reviews: []
+    })
 
-  console.log(body);
+    pin.save(function (err) {
+        if (err) throw err
+        res.send("Pin added!")
+    })
 
-  _DATA.push(body)
-  dataUtil.saveData(_DATA);
-  res.redirect("/");
+    res.redirect("/");
 });
 
 // API: post, create pin
-app.post("/api/create", function (req, res) {
-  var body = req.body;
+app.post("/api/pin", function (req, res) {
+    var body = req.body;
 
-  console.log(body);
+    var pin = new schema.Pin({
+        name: body.name,
+        onCampus: body.onCampus === "true",
+        category: body.category,
+        tags: body.tags,
+        user: body.user,
+        image: body.image,
+        rating: parseInt(body.rating),
+        reviews: []
+    })
 
-  body.rating = parseInt(body.rating);
-  body.tags = body.tags.toString().split(" ");
-  body.onCampus = body.onCampus === "true";
+    pin.save(function (err) {
+        if (err) throw err
+        res.send("Pin added!")
+    })
 
-  _DATA.push(body);
-  dataUtil.saveData(_DATA);
-  res.redirect("/");
+    schema.GroupPins.findOne({ name: body.category }, function (err,group) {
+        if (err) throw err
+        if (!group) {
+            var newGroup = new schema.GroupPins({
+                name: body.category,
+                pins: [body.name]
+            });
+            newGroup.save(function(err) {
+                if (err) throw err
+                return res.send("GroupPins added!")
+            });
+        } else {
+            group.pins = groups.pins.concat([body.name])
+            group.save(function (err) {
+                if (err) throw err
+                return res.send("Pin added to GroupPins!")
+            });
+        }
+    });
+});
+
+// API: post, create review
+app.post("/api/pin:name:review", function (req, res) {
+    var body = req.body;
+
+    schema.Pin.findOne({ name: req.params.name }, function (err, pin) {
+        if (err) throw err
+        if (!pin) return res.send("No pin of name given exists")
+        var review = {
+            rating: parseInt(req.body.rating),
+            comment: req.body.comment,
+            author: req.body.author
+        }
+        pin.reviews = pin.reviews.concat([review])
+        pin.save(function (err) {
+            if (err) throw err
+            return res.send("pin review added!")
+        })
+    });
+});
+
+
+
+// ************* DELETE *************
+// API: delete, del pin
+app.delete('/pin/:name', function (req, res) {
+    var category = ""
+
+    schema.Pin.findOneAndRemove({ name: req.params.name }, function (err, pin) {
+        if (!pin) res.send("Not Deleted")
+        category = pin.category
+        res.send("Deleted")
+    })
+
+    schema.GroupPins.update({ name: category }, { $pull: { pins: [req.params.name] } } );
+});
+
+// API: delete, del review
+app.delete('/pin/:name/review/last', function (req, res) {
+    // Delete last review
+
 });
 
 
