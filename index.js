@@ -43,14 +43,9 @@ app.use('/public', express.static('public'));
 
 
 app.get('/',function(req,res){
-    // schema.Pin.find({}, function(err, pins) {
-
-    //     // res.render(<handlebarspage>, <variableNameForData: actualData>)
-    //     //return res.render('pins', { data: pins });
-    // });
-    res.render('home', {
-        data: _DATA,
-        onHome: true,
+    schema.Pin.find({}, function(err, pins) {
+        // res.render(<handlebarspage>, <variableNameForData: actualData>)
+        return res.render('home', { data: pins });
     });
 });
 

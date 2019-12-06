@@ -1,6 +1,7 @@
 /* Please add your own! */
 * {
-    font-family: "Open Sans";
+    /* font-family: "Open Sans"; */
+    font-family: 'Solway', serif;
     font-weight: 550;
     letter-spacing: .8px;
 }
@@ -144,6 +145,14 @@ span {
     /* color: #C2D5E6; */
     color: #A2BFD8;
 }
+
+.center-cropped {
+    width: 200px;
+    height: 200px;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
 
 /******** CREATE.HANDLEBARS ********/
 #submitPin {

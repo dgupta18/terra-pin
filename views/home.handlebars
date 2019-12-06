@@ -1,4 +1,4 @@
-{{#if filter}}
+{{!-- {{#if filter}}
 <h2 style="margin-left: 10px">Explore: {{this.filter}}</h2>
 {{/if}}
 
@@ -17,16 +17,17 @@
 {{#if about}}
     <div class="about-page">Welcome to TerraPin. Here, users can upload and browse TerraPins (hotspots) on and around UMD's campus. Each pin is categorized, and users can browse through categories or look at random new pins!</div>
     <div class="about-page">Authors: Divya Gupta, Tiffany Tran, Anna Mazzanti</div>
-{{/if}}
-
-{{#unless navitem}}
+{{/if}} --}}
     {{#each data}}
         <article id="displayCard">
             {{!-- display picture --}}
             <span id="displayLeft">
-                <div id="displayImg">
-                    <img src={{this.image}} />
+                <div class="center-cropped" 
+                    style="background-image: url({{this.image}});">
                 </div>
+                {{!-- <div id="displayImg">
+                    <img src={{this.image}} class="center-cropped"/>
+                </div> --}}
             </span>
             {{!-- display other info --}}
             <span id="displayRight">
@@ -34,15 +35,15 @@
                 <div id="space"></div>
                 <span class="pinInfo">Uploaded by: {{this.user}}</span>
                 <div id="space"></div>
-                <span class="pinInfo">Length: {{this.ranking}} songs</span>
+                <span class="pinInfo">Ranking: {{this.ranking}} songs</span>
                 <div id="space"></div>
-                <span id="pinTags" class="pinInfo">Categories: {{this.tags}}<span>
+                <span id="pinTags" class="pinInfo">Tags: {{this.tags}}<span>
             </span>
         </article>
         <br>
-    {{else}}
+        {{else}}
         <article style="padding-left: 10px;">
             <h2>No pins yet - be the first to add one!</h2>
         </article>
     {{/each}}
-{{/unless}}
+
