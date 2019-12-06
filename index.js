@@ -11,7 +11,6 @@ var schema = require('./models/Schema');
 
 
 // Connect to MongoDB
-//console.log(process.env)
 console.log(process.env.MONGODB)
 mongoose.Promise = global.Promise
 mongoose.connect(process.env.MONGODB, { useNewUrlParser: true , useUnifiedTopology: true});
@@ -94,7 +93,7 @@ app.post("/create", function (req, res) {
 
     pin.save(function (err) {
         if (err) throw err;
-        return res.send("Pin added!")
+        //return res.send("Pin added!")
     })
 
     res.redirect("/");
@@ -151,7 +150,8 @@ app.post("/api/pin:name:review", function (req, res) {
         var review = {
             rating: parseInt(req.body.rating),
             comment: req.body.comment,
-            author: req.body.author
+            author: req.body.author,
+            timestamp : //add timestamp
         }
         pin.reviews = pin.reviews.concat([review])
         pin.save(function (err) {
@@ -182,7 +182,6 @@ app.delete('/pin/:name/review/last', function (req, res) {
     // Delete last review
 
 });
-
 
 
 // ************* CATEGORIES *************
