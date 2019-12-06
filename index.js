@@ -76,13 +76,14 @@ app.post("/create", function (req, res) {
 
     var pin = new schema.Pin({
         name: body.name,
+        description: body.description,
         onCampus: body.onCampus === "true",
+        image: body.image,
         tags: body.tags.toString().split(" "),
         user: body.user,
-        image: body.image,
-        description: body.description,
-        recommendations: [],
-        reviews: []
+        avgRating: 0,
+        reviews: [],
+        recommendations: []
     })
 
     pin.save(function (err) {
@@ -113,6 +114,7 @@ app.post("/api/pin", function (req, res) {
 
     pin.save(function (err) {
         if (err) throw err
+        io.emit('new pin', pin);
         res.send("Pin added!")
     })
 });
@@ -417,6 +419,16 @@ app.get("/search/:query", function(req,res){
 // app.listen(3000, function() {
 //     console.log('Example app listening on port 3000!');
 // });
+
+
+// To know if users are connected
+io.on('connection', function(socket) {
+    console.log('NEW connection.');
+    socket.on('disconnect', function(){
+        console.log('Oops. A user disconnected.');
+  });
+});
+
 
 http.listen(3000, function() {
     console.log('Example app listening on port 3000!');
