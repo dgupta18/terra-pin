@@ -58,11 +58,13 @@ pinSchema.add({
         type: String,
         required: true
     },
+    avgRating: {
+        type: Number,
+        required: false
+    },
     reviews: [reviewSchema],
     recommendations: [recommendationSchema]
 });
-
-
 
 var Recommendation = mongoose.model('Recommendation', recommendationSchema)
 var Pin = mongoose.model('Pin', pinSchema);

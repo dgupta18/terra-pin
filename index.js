@@ -144,11 +144,12 @@ app.delete('/api/delete/pin/:name', function (req, res) {
 
     schema.Pin.findOneAndRemove({ name: req.params.name }, function (err, currPin) {
         if (!currPin) res.send("Not Deleted")
-        //FIX
-        schema.Pin.update( { $pull: { "recommendations.location" : currPin } })
         res.send("Deleted")
     })
-    //schema.GroupPins.update({ name: category }, { $pull: { pins: [req.params.name] } } );
+
+    // look through each pin 
+    //     look through recommended array
+    //          if recommended.location = req.params.name, remove recommended
 });
 
 // API: delete, del review
@@ -272,6 +273,7 @@ app.get("/api/OffCampus", function (req, res) {
 
   res.json(retArr);
 })
+
 
 
 
