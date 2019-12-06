@@ -13,6 +13,9 @@ var reviewSchema = new mongoose.Schema({
     author: {
         type: String,
         required: true
+    },
+    timeCreated: {
+        type: String
     }
 });
 
@@ -21,11 +24,15 @@ var pinSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    description: {
+        type: String,
+        required: true
+    },
     onCampus: {
         type: Boolean,
         required: true
     },
-    category: {
+    image: {
         type: String,
         required: true
     },
@@ -33,30 +40,23 @@ var pinSchema = new mongoose.Schema({
         type: [String],
         required: false
     },
+    reviews: [reviewSchema],
+    recommendations: [recommendationSchema]
+});
+
+var recommendationSchema = new mongoose.Schema({
     user: {
         type: String,
         required: true
     },
-    image: {
+    location: [pinSchema],
+    reason: {
         type: String,
         required: true
-    },
-    rating: {
-        type: Number,
-        required: true
-    },
-    reviews: [reviewSchema]
+    }
 });
 
-var groupPinsSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    pins: [pinSchema]
-});
-
-var GroupPins = mongoose.model('GroupPin', groupPinsSchema)
+var Recommendation = mongoose.model('Recommendation', recommendationSchema)
 var Pin = mongoose.model('Pin', pinSchema);
 var Review = mongoose.model('Review', reviewSchema);
 
