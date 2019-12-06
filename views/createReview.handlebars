@@ -1,0 +1,27 @@
+form: {
+rating: number
+comment: String
+author: String
+timeCreated: String
+}
+<article id="form">
+    <h1>Rating for {{location}}</h1>
+    <form id="createForm" method="POST" action=/createReview>
+        <div class="input-field">
+            <label>Rating (out of 5):</label><br>
+            <input type="text" name="rating" size="50" placeholder="ex: 5">
+        </div>
+        <div id="space"></div>
+        <div class="input-field">
+            <label>Comment:</label><br>
+            <input type="text" name="comment" size="50" placeholder="ex: this place has great coffee!">
+        </div>
+        <div id="space"></div>
+        <div class="input-field">
+            <label>Your Name:</label><br>
+            <input type="text" name="user" size="50" placeholder="ex: Divya">
+        </div>
+        <div id="space"></div>
+        <button id="submitPin" type="submit">Submit!</button>
+    </form>
+</article>
