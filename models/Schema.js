@@ -62,6 +62,10 @@ pinSchema.add({
         type: String,
         required: true
     },
+    avgRating: {
+        type: Number,
+        required: false
+    },
     reviews: [reviewSchema],
     recommendations: [recommendationSchema]
 });
