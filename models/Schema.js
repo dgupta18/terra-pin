@@ -53,7 +53,7 @@ var groupPinsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    pins: [String]
+    pins: [pinSchema]
 });
 
 var GroupPins = mongoose.model('GroupPin', groupPinsSchema)
