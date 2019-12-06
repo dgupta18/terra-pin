@@ -30,7 +30,7 @@ var recommendationSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    location: pinSchema,
+    location: String,
     reason: {
         type: String,
         required: true
