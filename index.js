@@ -7,6 +7,8 @@ var exphbs = require('express-handlebars');
 var dataUtil = require("./data-util");
 var _ = require("underscore");
 var schema = require('./models/Schema');
+var moment = require('moment');
+
 
 
 // var http = require('http').Server(app);
@@ -91,6 +93,7 @@ app.post("/create", function (req, res) {
     res.redirect("/");
 });
 
+//DONE
 // API: post, create pin
 app.post("/api/pin", function (req, res) {
     var body = req.body;
@@ -113,10 +116,12 @@ app.post("/api/pin", function (req, res) {
     })
 });
 
+//DONE
 // API: post, create review
 app.post("/api/create/pin/:name/review", function (req, res) {
     var body = req.body;
 
+    // add a review to a pin
     schema.Pin.findOne({ name: req.params.name }, function (err, currPin) {
         if (err) throw err
         if (!currPin) return res.send("No pin of name given exists")
@@ -125,14 +130,21 @@ app.post("/api/create/pin/:name/review", function (req, res) {
             rating: parseInt(req.body.rating),
             comment: req.body.comment,
             author: req.body.author,
-            timestamp : 0//add timestamp
+            timestamp : moment().format('LLL')
         }
         currPin.reviews = currPin.reviews.concat([review])
         currPin.save(function (err) {
             if (err) throw err
             return res.send("pin review added!")
         })
+
+
+        // save new pin avg rating
+    
     });
+
+
+
 });
 
 
@@ -199,20 +211,24 @@ app.post('/api/create/pin/recommendation/:for/:of', function (req, res) {
 // ************* TAGS *************
 // NAV: Tags 
 app.get("/Tags", function(req,res){
-  var tags = dataUtil.getAllTags(_DATA);
-  console.log(tags);
-  var tag = true;
-  
-  console.log(tag);
-
-  res.render('home', {
-    data: tags,
-    filter: "Tags",
-    navitem: true,
-    onHome: false,
-    onCreate: false,
-    tag: tag
-  });
+    var tagSet = new Set();
+    schema.Pin.find({}, function(err, pinGroup){
+        if (err) throw err
+        _.each(pinGroup, function(pin){
+            _.each(pin.tags, function(tag){
+                tagSet.add(tag)
+            })
+        })
+        console.log(tagSet)
+        res.render('home', {
+            data: Array.from(tagSet),
+            filter: "Tags",
+            navitem: true,
+            onHome: false,
+            onCreate: false,
+            tag: true
+          });
+    })
 });
 
 // NAV: Tags - specific tag
@@ -236,22 +252,26 @@ app.get("/Tags/:subgroup", function (req, res) {
 
 // API: get, get tags
 app.get("/api/Tags", function (req, res) {
-    var tags = dataUtil.getAllTags(_DATA);
-    res.json(tags);
+    schema.Pin.find({}, function(err, pinGroup){
+        if (err) throw err
+        var tagSet = new Set();
+        _.each(pinGroup, function(pin){
+            console.log(pin.name)
+            _.each(pin.tags, function(tag){
+                tagSet.add(tag)
+            })
+        })
+        res.json(Array.from(tagSet))
+    })
 });
 
 // API: get, get specific given tag
-app.get("/api/Tags/:subgroup", function (req, res) {
-    var _subgroup = req.params.subgroup;
-    var retArr = [];
+app.get("/api/Tags/:tag", function (req, res) {
+    var tag = req.params.tag;
 
-    _.each(_DATA, function (elem) {
-        if (elem.tags.includes(_subgroup)) {
-            retArr.push(elem);
-        }
+    schema.Pin.find({tags: [tag]}, function(err, pins) {
+        res.json(pins);
     })
-
-    res.json(retArr);
 });
 
 
@@ -263,26 +283,28 @@ app.get("/api/Tags/:subgroup", function (req, res) {
 app.get("/api/OnCampus", function(req,res){
   var retArr = [];
   
-  _.each(_DATA, function(elem){
-    if (elem.onCampus) {
-      retArr.push(elem);
-    }
+  schema.Pin.find({}, function(err, pins) {
+    _.each(pins, function(elem){
+        if (elem.onCampus) {
+          retArr.push(elem);
+        }
+      })
+      res.json(retArr)
   })
-
-  retArr.push(retArr)
 })
 
 // API: get, offCampus
 app.get("/api/OffCampus", function (req, res) {
   var retArr = [];
 
-  _.each(_DATA, function (elem) {
-    if (!elem.onCampus) {
-      retArr.push(elem);
-    }
+  schema.Pin.find({}, function(err, pins) {
+    _.each(pins, function(elem){
+        if (!elem.onCampus) {
+          retArr.push(elem);
+        }
+      })
+      res.json(retArr)
   })
-
-  res.json(retArr);
 })
 
 
@@ -318,22 +340,35 @@ app.get("/api/Ranking", function(req,res){
 
 // ************* RANDOM *************
 // NAV: Random
-app.get("/Random", function (req, res) {
-  var rand = _DATA[Math.floor(Math.random() * _DATA.length)];
 
-  res.render('home', {
-    data: [rand],
-    filter: "Random",
-    onHome: false,
-    onCreate: false,
-  });
+app.get("/Random", function (req, res) {
+    // var rand = _DATA[Math.floor(Math.random() * _DATA.length)];
+    schema.Pin.findOneRandom(function(err, result) {
+        if (!err) {
+            res.render('home', {
+                data: [result],
+                filter: "Random",
+                onHome: false,
+                onCreate: false,
+              });
+        } else {
+            res.send("No Pins available");
+        }
+      });
+
 });
 
 // API: get, get random pin
 app.get("/api/Random", function(req,res){
-  var rand = _DATA[Math.floor(Math.random() * _DATA.length)];
 
-  res.json(rand);
+    schema.Pin.findOneRandom(function(err, result) {
+        if (!err) {
+          console.log(result); // 1 element
+          res.json(result)
+        } else {
+            res.send("No Pins available");
+        }
+      });
 })
 
 // ************* ABOUT *************
@@ -352,23 +387,23 @@ app.get("/About", function (req, res) {
 
 
 
-// // ************* SEARCH *************
-// app.get("/search/:query", function(req,res){
-//   var _query = req.params.query.toLowerCase();
-//   var retArr = [];
+// ************* SEARCH *************
+app.get("/search/:query", function(req,res){
+  var _query = req.params.query.toLowerCase();
+  var retArr = [];
 
-//   console.log("QUERY: " + _query)
+  console.log("QUERY: " + _query)
 
-//   _.each(_DATA, function(elem){
-//     if (elem.name.toLowerCase().startsWith(_query)) {
-//       retArr.push(elem);
-//     }
-//   })
+  _.each(_DATA, function(elem){
+    if (elem.name.toLowerCase().startsWith(_query)) {
+      retArr.push(elem);
+    }
+  })
 
-//   console.log(retArr);
+  console.log(retArr);
 
-//   res.send(retArr);
-// })
+  res.send(retArr);
+})
 
 
 
