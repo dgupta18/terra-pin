@@ -11,8 +11,8 @@ var moment = require('moment');
 
 
 
-// var http = require('http').Server(app);
-// var io = require('socket.io')(http);
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 // Connect to MongoDB
 console.log(process.env.MONGODB)
@@ -104,6 +104,7 @@ app.post("/api/pin", function (req, res) {
         image: body.image,
         tags: body.tags,
         user: body.user,
+        avgRating: 0,
         reviews: [],
         recommendations: []
     })
@@ -128,17 +129,22 @@ app.post("/api/create/pin/:name/review", function (req, res) {
             rating: parseInt(req.body.rating),
             comment: req.body.comment,
             author: req.body.author,
-            timestamp : moment().format('LLL')
+            timeCreated : moment().format('LLL').toString()
         }
         currPin.reviews = currPin.reviews.concat([review])
+        
+    // save new pin avg rating
+        var newAvgRating = (currPin.avgRating*(currPin.reviews.length-1)) + parseInt(req.body.rating)
+        console.log(currPin)
+        newAvgRating /= currPin.reviews.length
+        
+        currPin.avgRating = newAvgRating
         currPin.save(function (err) {
             if (err) throw err
-            return res.send("pin review added!")
+            console.log("pin rating updated")
+            console.log(currPin.avgRating)
+            return res.send("pin rating updates")
         })
-
-
-        // save new pin avg rating
-    
     });
 
 
@@ -385,6 +391,10 @@ app.get("/search/:query", function(req,res){
 
 
 // ************* SETUP *************
-app.listen(3000, function() {
+// app.listen(3000, function() {
+//     console.log('Example app listening on port 3000!');
+// });
+
+http.listen(3000, function() {
     console.log('Example app listening on port 3000!');
 });
