@@ -19,7 +19,21 @@ var reviewSchema = new mongoose.Schema({
     }
 });
 
-var pinSchema = new mongoose.Schema({
+var pinSchema = new mongoose.Schema();
+
+var recommendationSchema = new mongoose.Schema({
+    user: {
+        type: String,
+        required: true
+    },
+    location: pinSchema,
+    reason: {
+        type: String,
+        required: true
+    }
+});
+
+pinSchema.add({
     name: {
         type: String,
         required: true
@@ -40,21 +54,15 @@ var pinSchema = new mongoose.Schema({
         type: [String],
         required: false
     },
-    reviews: [reviewSchema],
-    recommendations: [recommendationSchema]
-});
-
-var recommendationSchema = new mongoose.Schema({
     user: {
         type: String,
         required: true
     },
-    location: [pinSchema],
-    reason: {
-        type: String,
-        required: true
-    }
+    reviews: [reviewSchema],
+    recommendations: [recommendationSchema]
 });
+
+
 
 var Recommendation = mongoose.model('Recommendation', recommendationSchema)
 var Pin = mongoose.model('Pin', pinSchema);
@@ -63,5 +71,5 @@ var Review = mongoose.model('Review', reviewSchema);
 module.exports = {
     Pin: Pin,
     Review: Review,
-    GroupPins: GroupPins
+    Recommendation: Recommendation
 }

@@ -17,6 +17,7 @@
         "express-handlebars": "^3.0.0",
         "mongoose": "^5.7.13",
         "morgan": "^1.9.1",
+        "socket.io": "^2.3.0",
         "underscore": "^1.9.1"
     }
 }

@@ -4,13 +4,13 @@ var mongoose = require('mongoose');
 var dotenv = require('dotenv').config();
 var logger = require('morgan');
 var exphbs = require('express-handlebars');
-// var dataUtil = require("./data-util");
+var dataUtil = require("./data-util");
 var _ = require("underscore");
 var schema = require('./models/Schema');
 
 
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+// var http = require('http').Server(app);
+// var io = require('socket.io')(http);
 
 // Connect to MongoDB
 console.log(process.env.MONGODB)
@@ -23,7 +23,7 @@ mongoose.connection.on('error', function () {
 
 // var _DATA = dataUtil.loadData().terraPins;
 //dotenv.load();
-// var _DATA = {}
+var _DATA = {}
 var app = express();
 
 app.use(logger('dev'));
@@ -34,8 +34,6 @@ app.set('view engine', 'handlebars');
 app.use('/public', express.static('public'));
 
 
-var Pin = require('./models/Schema');
-
 /* Add whatever endpoints you need! Remember that your API endpoints must
  * have '/api' prepended to them. Please remember that you need at least 5
  * endpoints for the API, and 5 others.
@@ -45,10 +43,11 @@ var Pin = require('./models/Schema');
 
 
 app.get('/',function(req,res){
-    Pins.find({}, function(err, pins) {
-        // res.render(<handlebarspage>, <variableNameForData: actualData>)
-        return res.render('pins', { data: pins });
-    });
+    // schema.Pin.find({}, function(err, pins) {
+
+    //     // res.render(<handlebarspage>, <variableNameForData: actualData>)
+    //     //return res.render('pins', { data: pins });
+    // });
     res.render('home', {
         data: _DATA,
         onHome: true,
@@ -57,7 +56,9 @@ app.get('/',function(req,res){
 
 // API: get, get raw data
 app.get('/api/getTerraPins', function(req,res){
-    res.json(Pins.find())
+    schema.Pin.find({}, function (err, pins) {
+        res.json(JSON.parse(JSON.stringify(pins)))
+    })
 });
 
 
@@ -74,15 +75,16 @@ app.get("/create", function (req, res) {
 // NAV: create pin (post req)
 app.post("/create", function (req, res) {
     var body = req.body;
+    console.log(body.description)
 
     var pin = new schema.Pin({
         name: body.name,
         onCampus: body.onCampus === "true",
-        category: body.category,
         tags: body.tags,
         user: body.user,
         image: body.image,
-        rating: parseInt(body.rating),
+        description: body.description,
+        recommendations: [],
         reviews: []
     })
 
@@ -100,56 +102,38 @@ app.post("/api/pin", function (req, res) {
 
     var pin = new schema.Pin({
         name: body.name,
+        description: body.description,
         onCampus: body.onCampus === "true",
-        category: body.category,
+        image: body.image,
         tags: body.tags,
         user: body.user,
-        image: body.image,
-        rating: parseInt(body.rating),
-        reviews: []
+        reviews: [],
+        recommendations: []
     })
+
 
     pin.save(function (err) {
         if (err) throw err
         res.send("Pin added!")
     })
-
-    schema.GroupPins.findOne({ name: body.category }, function (err,group) {
-        if (err) throw err
-        if (!group) {
-            var newGroup = new schema.GroupPins({
-                name: body.category,
-                pins: [body.name]
-            });
-            newGroup.save(function(err) {
-                if (err) throw err
-                return res.send("GroupPins added!")
-            });
-        } else {
-            group.pins = groups.pins.concat([body.name])
-            group.save(function (err) {
-                if (err) throw err
-                return res.send("Pin added to GroupPins!")
-            });
-        }
-    });
 });
 
 // API: post, create review
-app.post("/api/pin:name:review", function (req, res) {
+app.post("/api/create/pin/:name/review", function (req, res) {
     var body = req.body;
 
-    schema.Pin.findOne({ name: req.params.name }, function (err, pin) {
+    schema.Pin.findOne({ name: req.params.name }, function (err, currPin) {
         if (err) throw err
-        if (!pin) return res.send("No pin of name given exists")
+        if (!currPin) return res.send("No pin of name given exists")
+    
         var review = {
             rating: parseInt(req.body.rating),
             comment: req.body.comment,
             author: req.body.author,
-            timestamp : //add timestamp
+            timestamp : 0//add timestamp
         }
-        pin.reviews = pin.reviews.concat([review])
-        pin.save(function (err) {
+        currPin.reviews = currPin.reviews.concat([review])
+        currPin.save(function (err) {
             if (err) throw err
             return res.send("pin review added!")
         })
@@ -160,16 +144,16 @@ app.post("/api/pin:name:review", function (req, res) {
 
 // ************* DELETE *************
 // API: delete, del pin
-app.delete('/pin/:name', function (req, res) {
-    var category = ""
+app.delete('/api/delete/pin/:name', function (req, res) {
+    var name = req.params.name
 
-    schema.Pin.findOneAndRemove({ name: req.params.name }, function (err, pin) {
-        if (!pin) res.send("Not Deleted")
-        category = pin.category
+    schema.Pin.findOneAndRemove({ name: req.params.name }, function (err, currPin) {
+        if (!currPin) res.send("Not Deleted")
+        //FIX
+        schema.Pin.find({recommendations : currPin}, { $pull: { recommendations: currPin } })
         res.send("Deleted")
     })
-
-    schema.GroupPins.update({ name: category }, { $pull: { pins: [req.params.name] } } );
+    //schema.GroupPins.update({ name: category }, { $pull: { pins: [req.params.name] } } );
 });
 
 // API: delete, del review
@@ -178,63 +162,29 @@ app.delete('/pin/:name/review/last', function (req, res) {
 
 });
 
+// ************* RECOMMENDATIONS *************
+app.post('/api/create/pin/recommendation/:for/:of', function (req, res) {
+    schema.Pin.findOne({ name: req.params.for }, function (err, currPinFor) {
 
-// ************* CATEGORIES *************
-// NAV: Categories 
-app.get("/Category", function (req, res) {
-    var categories = dataUtil.getAllCategories(_DATA); //need to impl this function
-    console.log(categories);
-    var category = true;
+        if (err) throw err
+        if (!currPinFor) return res.send("No pin of name given exists")
 
-    console.log(category);
-
-    res.render('home', {
-        data: categories,
-        filter: "Category",
-        navitem: true,
-        onHome: false,
-        onCreate: false,
-        category: category
+        schema.Pin.findOne({ name : req.params.of}, function(err, currPinnOf ){
+            if (err) throw err
+            if (!currPinnOf) return res.send("No pin found to recommend")
+            
+            var recommendation = {
+                user: req.body.user,
+                location: currPinnOf,
+                reason: req.body.reason,
+            }
+            currPinFor.recommendations = currPinFor.recommendations.concat([recommendation])
+            currPinFor.save(function (err) {
+                if (err) throw err
+                return res.send("pin recommendation added!")
+            });
+        });
     });
-});
-
-// NAV: Categories - specific category
-app.get("/Category/:subgroup", function (req, res) {
-    var retArr = [];
-    var _subgroup = req.params.subgroup;
-
-    _.each(_DATA, function (elem) {
-        if (elem.category === _subgroup) {
-            retArr.push(elem);
-        }
-    })
-
-    res.render('home', {
-        data: retArr,
-        filter: _subgroup,
-        onHome: false,
-        onCreate: false
-    });
-});
-
-// API: get, get categories
-app.get("/api/Category", function (req, res) {
-    var categories = dataUtil.getAllCategories(_DATA);
-    res.json(categories);
-});
-
-// API: get, get specific given category
-app.get("/api/Category/:subgroup", function (req, res) {
-    var _subgroup = req.params.subgroup;
-    var retArr = [];
-
-    _.each(_DATA, function (elem) {
-        if (elem.category === _subgroup) {
-            retArr.push(elem);
-        }
-    })
-
-    res.json(retArr);
 });
 
 
@@ -425,6 +375,6 @@ app.get("/search/:query", function(req,res){
 
 
 // ************* SETUP *************
-http.listen(3000, function() {
+app.listen(3000, function() {
     console.log('Example app listening on port 3000!');
 });
