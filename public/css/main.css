@@ -159,6 +159,7 @@ span {
     font-size: 16px;
     /* color: #C2D5E6; */
     color: #A2BFD8;
+    width: 65%;
 }
 
 .center-cropped {
@@ -178,7 +179,7 @@ span {
 #star-rating {
     float:right;
 }
-#name-and-rating {
+.left-right {
     width: 100%;
     display: inline-block;
     padding-bottom: 8px;

@@ -4,26 +4,24 @@
 
 {{#if tag}}
     {{#each data}}
-        <a href="/Tag/{{this}}" id="groupDisp">{{this}}</a>
+        <a href="/Tags/{{this}}" id="groupDisp">{{this}}</a>
     {{/each}}
 {{/if}}
 
 {{#if about}}
-    <div class="about-page">Welcome to TerraPin. Here, users can upload and browse TerraPins (hotspots) on and around UMD's campus. Each pin is categorized, and users can browse through categories or look at random new pins!</div>
-    <div class="about-page">Authors: Divya Gupta, Tiffany Tran, Anna Mazzanti</div>
+    <div class="about-page">Welcome to TerraPin. Here, users can upload and browse TerraPins (hotspots) on and around UMD's campus. Each pin is categorized, and users can browse through categories or look at random new pins!</br>
+    Authors: Divya Gupta, Tiffany Tran, Anna Mazzanti</div>
 {{/if}}
 
 {{#unless navitem}}
     {{#each data}}
         <article id="displayCard">
-            <div id="name-and-rating">
+            <div class="left-right">
                 <div id="pinName">{{this.name}}</div>
                 <div id="star-rating">
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star"></span>
-                    <span class="fa fa-star"></span>
+                    {{#times this.avgRating}}
+                        <span class="fa fa-star checked"></span>
+                    {{/times}}
                 </div>
             </div>
             <div style="border-top: 1px solid #2E577C; padding-bottom:5px;"></div>
@@ -32,35 +30,34 @@
                     style="background-image: url({{this.image}});">
                 </div>
                 <div id="space"></div>
+                <span class="pinInfo">Description: {{this.description}}</span></br>
+                <div id="space"></div>
                 <span class="pinInfo">Uploaded by: {{this.user}}</span>
                 <div id="space"></div>
                 <span class="pinInfo">Average rating: {{this.avgRating}} stars</span>
                 <div id="space"></div>
+                <div class="left-right">
+                    <span class="pinInfo" style="float:left">Read the reviews: </span>
+                    <a href="/createReview" style="float:right;">Add a Review</a>
+                </div>
+                {{!-- DISPLAYING REVIEWS --}}
+                {{#each data.reviews}}
+                    <div class="left-right">
+                        <p style="float:left;">{{this.author}}</p>
+                        <div id="star-rating">
+                            {{#times this.rating}}
+                                <span class="fa fa-star checked"></span>
+                            {{/times}}
+                        </div>
+                    </div>
+                    <div style="border-top: 1px solid #2E577C; padding-bottom:10px;"></div>
+                {{/each}}
+
                 <div style="border-top: 1px solid #2E577C; padding-bottom:10px;"></div>
                 {{!-- <span id="pinTags" class="pinInfo">Tags:</span> --}}
                     {{#each this.tags}}
-                            <a href="/Tag/{{this}}" id="groupDisp">{{this}}</a>
+                            <a href="/Tags/{{this}}" id="groupDisp">{{this}}</a>
                     {{/each}}
-            {{!-- display picture --}}
-            {{!-- <span id="displayLeft">
-                <div class="center-cropped" 
-                    style="background-image: url({{this.image}});">
-                </div>
-            </span>
-            {{!-- display other info --}}
-            {{!-- <span id="displayRight">
-                <span id="pinName">{{this.name}}</span>
-                <div id="space"></div>
-                <span class="pinInfo">Uploaded by: {{this.user}}</span>
-                <div id="space"></div>
-                <span class="pinInfo">Ranking: {{this.ranking}}</span>
-                <div id="space"></div>
-                <span id="pinTags" class="pinInfo">Tags:</span>
-                <div id="space"></div>
-                    {{#each this.tags}}
-                            <a href="/Tag/{{this}}" id="groupDisp">{{this}}</a>
-                    {{/each}}
-            </span> --}}
         </article>
         <br>
         {{else}}

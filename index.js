@@ -8,7 +8,17 @@ var dataUtil = require("./data-util");
 var _ = require("underscore");
 var schema = require('./models/Schema');
 var moment = require('moment');
+<<<<<<< HEAD
 
+=======
+// exphbs.registerHelper('times', function(n, block) {
+//     var accum = '';
+//     n = parseInt(n)
+//     for(var i = 0; i < n; ++i)
+//         accum += block.fn(i);
+//     return accum;
+// });
+>>>>>>> c6b472c489aee6fbfbb8333f642cfb486de01d9b
 // var http = require('http').Server(app);
 // var io = require('socket.io')(http);
 
@@ -29,7 +39,16 @@ var app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.engine('handlebars', exphbs({ defaultLayout: 'main', partialsDir: "views/partials/" }));
+app.engine('handlebars', exphbs({ defaultLayout: 'main', partialsDir: "views/partials/", helpers:{
+            times: function(n, block) {
+                var accum = '';
+                //console.log(n)
+                n = parseInt(n)
+                for(var i = 0; i < n; ++i)
+                    accum += block.fn(i);
+                return accum;
+            }
+        }}))
 app.set('view engine', 'handlebars');
 app.use('/public', express.static('public'));
 
@@ -231,22 +250,16 @@ app.get("/Tags", function(req,res){
 });
 
 // NAV: Tags - specific tag
-app.get("/Tags/:subgroup", function (req, res) {
-    var retArr = [];
-    var _subgroup = req.params.subgroup;
-
-    _.each(_DATA, function (elem) {
-        if (elem.tags.includes(_subgroup)) {
-            retArr.push(elem);
-        }
-    })
-
-    res.render('home', {
-        data: retArr,
-        filter: _subgroup,
-        onHome: false,
-        onCreate: false
-    });
+app.get("/Tags/:tag", function (req, res) {
+    var tag = req.params.tag;
+    schema.Pin.find({tags: [tag]}, function(err, pins) {
+        res.render('home', {
+            data: pins,
+            filter: tag,
+            onHome: false,
+            onCreate: false
+        });
+    }) 
 });
 
 // API: get, get tags
@@ -255,7 +268,6 @@ app.get("/api/Tags", function (req, res) {
         if (err) throw err
         var tagSet = new Set();
         _.each(pinGroup, function(pin){
-            console.log(pin.name)
             _.each(pin.tags, function(tag){
                 tagSet.add(tag)
             })
