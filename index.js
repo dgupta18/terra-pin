@@ -190,20 +190,24 @@ app.post('/api/create/pin/recommendation/:for/:of', function (req, res) {
 // ************* TAGS *************
 // NAV: Tags 
 app.get("/Tags", function(req,res){
-  var tags = dataUtil.getAllTags(_DATA);
-  console.log(tags);
-  var tag = true;
-  
-  console.log(tag);
-
-  res.render('home', {
-    data: tags,
-    filter: "Tags",
-    navitem: true,
-    onHome: false,
-    onCreate: false,
-    tag: tag
-  });
+    var tagSet = new Set();
+    schema.Pin.find({}, function(err, pinGroup){
+        if (err) throw err
+        _.each(pinGroup, function(pin){
+            _.each(pin.tags, function(tag){
+                tagSet.add(tag)
+            })
+        })
+        console.log(tagSet)
+        res.render('home', {
+            data: Array.from(tagSet),
+            filter: "Tags",
+            navitem: true,
+            onHome: false,
+            onCreate: false,
+            tag: true
+          });
+    })
 });
 
 // NAV: Tags - specific tag
@@ -227,22 +231,26 @@ app.get("/Tags/:subgroup", function (req, res) {
 
 // API: get, get tags
 app.get("/api/Tags", function (req, res) {
-    var tags = dataUtil.getAllTags(_DATA);
-    res.json(tags);
+    schema.Pin.find({}, function(err, pinGroup){
+        if (err) throw err
+        var tagSet = new Set();
+        _.each(pinGroup, function(pin){
+            console.log(pin.name)
+            _.each(pin.tags, function(tag){
+                tagSet.add(tag)
+            })
+        })
+        res.json(Array.from(tagSet))
+    })
 });
 
 // API: get, get specific given tag
-app.get("/api/Tags/:subgroup", function (req, res) {
-    var _subgroup = req.params.subgroup;
-    var retArr = [];
+app.get("/api/Tags/:tag", function (req, res) {
+    var tag = req.params.tag;
 
-    _.each(_DATA, function (elem) {
-        if (elem.tags.includes(_subgroup)) {
-            retArr.push(elem);
-        }
+    schema.Pin.find({tags: [tag]}, function(err, pins) {
+        res.json(pins);
     })
-
-    res.json(retArr);
 });
 
 

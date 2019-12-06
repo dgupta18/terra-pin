@@ -1,12 +1,7 @@
-{{!-- {{#if filter}}
+{{#if filter}}
 <h2 style="margin-left: 10px">Explore: {{this.filter}}</h2>
 {{/if}}
 
-{{#if category}}
-    {{#each data}}
-        <a href="/Category/{{this}}" id="groupDisp">{{this}}</a>
-    {{/each}}
-{{/if}}
 
 {{#if tag}}
     {{#each data}}
@@ -17,28 +12,55 @@
 {{#if about}}
     <div class="about-page">Welcome to TerraPin. Here, users can upload and browse TerraPins (hotspots) on and around UMD's campus. Each pin is categorized, and users can browse through categories or look at random new pins!</div>
     <div class="about-page">Authors: Divya Gupta, Tiffany Tran, Anna Mazzanti</div>
-{{/if}} --}}
+{{/if}}
+{{#unless navitem}}
     {{#each data}}
         <article id="displayCard">
+            <div id="name-and-rating">
+                <div id="pinName">{{this.name}}</div>
+                <div id="star-rating">
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star"></span>
+                    <span class="fa fa-star"></span>
+                </div>
+            </div>
+            <div style="border-top: 1px solid #2E577C; padding-bottom:5px;"></div>
+            <div id="space"></div>
+            <div class="center-cropped" 
+                    style="background-image: url({{this.image}});">
+                </div>
+                <div id="space"></div>
+                <span class="pinInfo">Uploaded by: {{this.user}}</span>
+                <div id="space"></div>
+                <span class="pinInfo">Average rating: {{this.avgRating}} stars</span>
+                <div id="space"></div>
+                <div style="border-top: 1px solid #2E577C; padding-bottom:10px;"></div>
+                {{!-- <span id="pinTags" class="pinInfo">Tags:</span> --}}
+                    {{#each this.tags}}
+                            <a href="/Tag/{{this}}" id="groupDisp">{{this}}</a>
+                    {{/each}}
             {{!-- display picture --}}
-            <span id="displayLeft">
+            {{!-- <span id="displayLeft">
                 <div class="center-cropped" 
                     style="background-image: url({{this.image}});">
                 </div>
-                {{!-- <div id="displayImg">
-                    <img src={{this.image}} class="center-cropped"/>
-                </div> --}}
             </span>
             {{!-- display other info --}}
-            <span id="displayRight">
+            {{!-- <span id="displayRight">
                 <span id="pinName">{{this.name}}</span>
                 <div id="space"></div>
                 <span class="pinInfo">Uploaded by: {{this.user}}</span>
                 <div id="space"></div>
-                <span class="pinInfo">Ranking: {{this.ranking}} songs</span>
+                <span class="pinInfo">Average rating: {{this.avgRating}} stars</span>
                 <div id="space"></div>
-                <span id="pinTags" class="pinInfo">Tags: {{this.tags}}<span>
-            </span>
+                <span id="pinTags" class="pinInfo">Tags:</span>
+                <div id="space"></div>
+                    {{#each this.tags}}
+                            <a href="/Tag/{{this}}" id="groupDisp">{{this}}</a>
+                    {{/each}}
+            </span> --}}
         </article>
         <br>
         {{else}}
@@ -46,4 +68,5 @@
             <h2>No pins yet - be the first to add one!</h2>
         </article>
     {{/each}}
+{{/unless}}
 
