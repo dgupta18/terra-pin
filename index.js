@@ -91,6 +91,7 @@ app.post("/create", function (req, res) {
     res.redirect("/");
 });
 
+//DONE
 // API: post, create pin
 app.post("/api/pin", function (req, res) {
     var body = req.body;
@@ -113,6 +114,7 @@ app.post("/api/pin", function (req, res) {
     })
 });
 
+//DONE
 // API: post, create review
 app.post("/api/create/pin/:name/review", function (req, res) {
     var body = req.body;
@@ -251,26 +253,28 @@ app.get("/api/Tags/:subgroup", function (req, res) {
 app.get("/api/OnCampus", function(req,res){
   var retArr = [];
   
-  _.each(_DATA, function(elem){
-    if (elem.onCampus) {
-      retArr.push(elem);
-    }
+  schema.Pin.find({}, function(err, pins) {
+    _.each(pins, function(elem){
+        if (elem.onCampus) {
+          retArr.push(elem);
+        }
+      })
+      res.json(retArr)
   })
-
-  retArr.push(retArr)
 })
 
 // API: get, offCampus
 app.get("/api/OffCampus", function (req, res) {
   var retArr = [];
 
-  _.each(_DATA, function (elem) {
-    if (!elem.onCampus) {
-      retArr.push(elem);
-    }
+  schema.Pin.find({}, function(err, pins) {
+    _.each(pins, function(elem){
+        if (!elem.onCampus) {
+          retArr.push(elem);
+        }
+      })
+      res.json(retArr)
   })
-
-  res.json(retArr);
 })
 
 
