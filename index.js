@@ -9,8 +9,6 @@ var _ = require("underscore");
 var schema = require('./models/Schema');
 var moment = require('moment');
 
-
-
 // var http = require('http').Server(app);
 // var io = require('socket.io')(http);
 
@@ -95,7 +93,7 @@ app.post("/create", function (req, res) {
 
 //DONE
 // API: post, create pin
-app.post("/api/pin", function (req, res) {
+app.post("/api/create/pin", function (req, res) {
     var body = req.body;
 
     var pin = new schema.Pin({
@@ -138,13 +136,9 @@ app.post("/api/create/pin/:name/review", function (req, res) {
             return res.send("pin review added!")
         })
 
-
         // save new pin avg rating
-    
+        
     });
-
-
-
 });
 
 
@@ -163,11 +157,16 @@ app.delete('/api/delete/pin/:name', function (req, res) {
 });
 
 // API: delete, del review
-app.delete('/pin/:name/review/last', function (req, res) {
-    var name = req.params.name
-
-
+app.delete('/api/delete/pin/:name/lastreview', function (req, res) {
+    schema.Pin.updateOne({ name: req.params.name }, { $pop: { reviews: 1 } }, function(err, unknown){
+        if (err) throw err
+        return res.send("deleted last review from pin!")
+    })
 });
+
+
+
+
 
 // ************* RECOMMENDATIONS *************
 app.post('/api/create/pin/recommendation/:for/:of', function (req, res) {
@@ -227,7 +226,7 @@ app.get("/Tags", function(req,res){
             onHome: false,
             onCreate: false,
             tag: true
-          });
+        });
     })
 });
 
