@@ -45,17 +45,6 @@ app.engine('handlebars', exphbs({ defaultLayout: 'main', partialsDir: "views/par
                 return accum;
             }
         }}))
-// app.engine('handlebars', exphbs({
-//     helpers:{
-//         times: function(n, block) {
-//             var accum = '';
-//             n = parseInt(n)
-//             for(var i = 0; i < n; ++i)
-//                 accum += block.fn(i);
-//             return accum;
-//         }
-//     }
-// }))
 app.set('view engine', 'handlebars');
 app.use('/public', express.static('public'));
 
