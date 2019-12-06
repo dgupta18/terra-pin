@@ -144,8 +144,9 @@ app.post("/api/create/pin/:name/review", function (req, res) {
             rating: parseInt(req.body.rating),
             comment: req.body.comment,
             author: req.body.author,
-            timestamp : moment().format('LLL')
+            timeCreated: moment().format('LLL').toString()
         }
+        console.log('moment: ' + moment().format('LLL'));
         currPin.reviews = currPin.reviews.concat([review])
         currPin.save(function (err) {
             if (err) throw err
