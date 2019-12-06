@@ -16,10 +16,15 @@ body {
     overflow: hidden;
 }
 
+#title {
+    margin-right: auto;
+    float: left !important;
+}
+
 #nav > a {
     color: #A2BFD8;
     text-decoration: none;
-    float: left;
+    float: right;
     text-align: center;
     display: block;
     padding: 8px 16px;

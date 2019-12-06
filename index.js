@@ -75,7 +75,7 @@ app.post("/create", function (req, res) {
     var pin = new schema.Pin({
         name: body.name,
         onCampus: body.onCampus === "true",
-        tags: body.tags,
+        tags: body.tags.toString().split(" "),
         user: body.user,
         image: body.image,
         description: body.description,
@@ -100,7 +100,7 @@ app.post("/api/pin", function (req, res) {
         description: body.description,
         onCampus: body.onCampus === "true",
         image: body.image,
-        tags: body.tags,
+        tags: body.tags.toString().split(" "),
         user: body.user,
         reviews: [],
         recommendations: []
@@ -120,7 +120,7 @@ app.post("/api/create/pin/:name/review", function (req, res) {
     schema.Pin.findOne({ name: req.params.name }, function (err, currPin) {
         if (err) throw err
         if (!currPin) return res.send("No pin of name given exists")
-    
+        
         var review = {
             rating: parseInt(req.body.rating),
             comment: req.body.comment,
@@ -140,21 +140,20 @@ app.post("/api/create/pin/:name/review", function (req, res) {
 // ************* DELETE *************
 // API: delete, del pin
 app.delete('/api/delete/pin/:name', function (req, res) {
-    var name = req.params.name
-
     schema.Pin.findOneAndRemove({ name: req.params.name }, function (err, currPin) {
-        if (!currPin) res.send("Not Deleted")
-        res.send("Deleted")
+        if (!currPin) res.send("no pin with this name exists!")
     })
 
-    // look through each pin 
-    //     look through recommended array
-    //          if recommended.location = req.params.name, remove recommended
+    schema.Pin.updateMany({ 'recommendations.location': req.params.name }, { $pull: { 'recommendations': { 'location': req.params.name } } }, function(err,unknown){
+        if (err) throw err
+        return res.send("deleted the pin!")
+    })
 });
 
 // API: delete, del review
 app.delete('/pin/:name/review/last', function (req, res) {
-// Delete last review
+    var name = req.params.name
+
 
 });
 
@@ -165,21 +164,33 @@ app.post('/api/create/pin/recommendation/:for/:of', function (req, res) {
         if (err) throw err
         if (!currPinFor) return res.send("No pin of name given exists")
 
-        schema.Pin.findOne({ name : req.params.of}, function(err, currPinnOf ){
+        var recommendation = {
+            user: req.body.user,
+            location: req.params.of,
+            reason: req.body.reason
+        }
+        
+        currPinFor.recommendations = currPinFor.recommendations.concat([recommendation])
+        currPinFor.save(function(err){
             if (err) throw err
-            if (!currPinnOf) return res.send("No pin found to recommend")
+            return res.send("pin recommendation added!")
+        })
+        
+        // schema.Pin.findOne({ name : req.params.of}, function(err, currPinnOf ){
+        //     if (err) throw err
+        //     if (!currPinnOf) return res.send("No pin found to recommend")
             
-            var recommendation = {
-                user: req.body.user,
-                location: currPinnOf,
-                reason: req.body.reason,
-            }
-            currPinFor.recommendations = currPinFor.recommendations.concat([recommendation])
-            currPinFor.save(function (err) {
-                if (err) throw err
-                return res.send("pin recommendation added!")
-            });
-        });
+        //     var recommendation = {
+        //         user: req.body.user,
+        //         location: currPinnOf,
+        //         reason: req.body.reason,
+        //     }
+        //     currPinFor.recommendations = currPinFor.recommendations.concat([recommendation])
+        //     currPinFor.save(function (err) {
+        //         if (err) throw err
+        //         return res.send("pin recommendation added!")
+        //     });
+        // });
     });
 });
 
