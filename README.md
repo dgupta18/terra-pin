@@ -5,7 +5,7 @@
 
 Name: Divya Gupta, Tiffany Tran, Anna Mazzanti
 
-Date: Nov 2, 2019
+Date: Dec 6, 2019
 
 Project Topic: Website where users can upload and browse TerraPins (hotspots) on and around UMD's campus. Each pin is categorized, and users can browse through categories or look at random new pins!
 
