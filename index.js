@@ -8,9 +8,7 @@ var dataUtil = require("./data-util");
 var _ = require("underscore");
 var schema = require('./models/Schema');
 var moment = require('moment');
-<<<<<<< HEAD
 
-=======
 // exphbs.registerHelper('times', function(n, block) {
 //     var accum = '';
 //     n = parseInt(n)
@@ -18,7 +16,6 @@ var moment = require('moment');
 //         accum += block.fn(i);
 //     return accum;
 // });
->>>>>>> c6b472c489aee6fbfbb8333f642cfb486de01d9b
 // var http = require('http').Server(app);
 // var io = require('socket.io')(http);
 
