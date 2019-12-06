@@ -12,7 +12,6 @@
     <div class="about-page">Welcome to TerraPin. Here, users can upload and browse TerraPins (hotspots) on and around UMD's campus. Each pin is categorized, and users can browse through categories or look at random new pins!</br>
     Authors: Divya Gupta, Tiffany Tran, Anna Mazzanti</div>
 {{/if}}
-
 {{#unless navitem}}
     {{#each data}}
         <article id="displayCard">
@@ -57,6 +56,26 @@
                 {{!-- <span id="pinTags" class="pinInfo">Tags:</span> --}}
                     {{#each this.tags}}
                             <a href="/Tags/{{this}}" id="groupDisp">{{this}}</a>
+                    {{/each}}
+            {{!-- display picture --}}
+            {{!-- <span id="displayLeft">
+                <div class="center-cropped" 
+                    style="background-image: url({{this.image}});">
+                </div>
+            </span>
+            {{!-- display other info --}}
+            {{!-- <span id="displayRight">
+                <span id="pinName">{{this.name}}</span>
+                <div id="space"></div>
+                <span class="pinInfo">Uploaded by: {{this.user}}</span>
+                <div id="space"></div>
+
+                <span class="pinInfo">Ranking: {{this.ranking}}</span>
+                <div id="space"></div>
+                <span id="pinTags" class="pinInfo">Tags:</span>
+                <div id="space"></div>
+                    {{#each this.tags}}
+                            <a href="/Tag/{{this}}" id="groupDisp">{{this}}</a>
                     {{/each}}
         </article>
         <br>

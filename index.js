@@ -9,15 +9,10 @@ var _ = require("underscore");
 var schema = require('./models/Schema');
 var moment = require('moment');
 
-// exphbs.registerHelper('times', function(n, block) {
-//     var accum = '';
-//     n = parseInt(n)
-//     for(var i = 0; i < n; ++i)
-//         accum += block.fn(i);
-//     return accum;
-// });
-// var http = require('http').Server(app);
-// var io = require('socket.io')(http);
+
+
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 // Connect to MongoDB
 console.log(process.env.MONGODB)
@@ -90,13 +85,14 @@ app.post("/create", function (req, res) {
 
     var pin = new schema.Pin({
         name: body.name,
+        description: body.description,
         onCampus: body.onCampus === "true",
+        image: body.image,
         tags: body.tags.toString().split(" "),
         user: body.user,
-        image: body.image,
-        description: body.description,
-        recommendations: [],
-        reviews: []
+        avgRating: 0,
+        reviews: [],
+        recommendations: []
     })
 
     pin.save(function (err) {
@@ -119,6 +115,7 @@ app.post("/api/create/pin", function (req, res) {
         image: body.image,
         tags: body.tags.toString().split(" "),
         user: body.user,
+        avgRating: 0,
         reviews: [],
         recommendations: []
     })
@@ -126,6 +123,7 @@ app.post("/api/create/pin", function (req, res) {
 
     pin.save(function (err) {
         if (err) throw err
+        io.emit('new pin', pin);
         res.send("Pin added!")
     })
 });
@@ -144,17 +142,23 @@ app.post("/api/create/pin/:name/review", function (req, res) {
             rating: parseInt(req.body.rating),
             comment: req.body.comment,
             author: req.body.author,
-            timeCreated: moment().format('LLL').toString()
+            timeCreated : moment().format('LLL').toString()
         }
         console.log('moment: ' + moment().format('LLL'));
         currPin.reviews = currPin.reviews.concat([review])
+        
+    // save new pin avg rating
+        var newAvgRating = (currPin.avgRating*(currPin.reviews.length-1)) + parseInt(req.body.rating)
+        console.log(currPin)
+        newAvgRating /= currPin.reviews.length
+        
+        currPin.avgRating = newAvgRating
         currPin.save(function (err) {
             if (err) throw err
-            return res.send("pin review added!")
+            console.log("pin rating updated")
+            console.log(currPin.avgRating)
+            return res.send("pin rating updates")
         })
-
-        // save new pin avg rating
-        
     });
 });
 
@@ -417,6 +421,20 @@ app.get("/search/:query", function(req,res){
 
 
 // ************* SETUP *************
-app.listen(3000, function() {
+// app.listen(3000, function() {
+//     console.log('Example app listening on port 3000!');
+// });
+
+
+// To know if users are connected
+io.on('connection', function(socket) {
+    console.log('NEW connection.');
+    socket.on('disconnect', function(){
+        console.log('Oops. A user disconnected.');
+  });
+});
+
+
+http.listen(3000, function() {
     console.log('Example app listening on port 3000!');
 });
