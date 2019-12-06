@@ -78,31 +78,29 @@ request(options, function (error, response, body) {
 * GET endpoint routes: 
    - `/api/OnCampus`, *
    - `/api/OffCampus`, *
-   - `/api/Categories`, *
-   - `/api/Categories/:subgroup`, *
    - `/api/Ranking`, *
-   - `/api/Tags/`, *
    - `/api/Tags/:subgroup`, *
-   - `/api/Users`, *
    - `/api/Random` *
 * POST endpoint routes:
-   - `/api/create`, *
-   - `/api/???`
+   - `/api/create/pin`,
+   - `/api/create/pin/:name/review`,
+   - `/api/create/pin/:name/recommendation` 
 * DELETE endpoint routes:
-   - `/api/???`,
-   - `/api/???`
+   - `/api/delete/pin/:name`,
+   - `/api/delete/pin/:name/latestreview` (will delete last recommendation added to that pin)
 
-### 4. Search Data
 
-Search Field: `name of TerraPin`
-GET search api: `/search/:query` *
-
-### 5. Navigation Pages
+### 4. Navigation Pages
 
 Navigation Filters
-1. Categories -> `  /Categories  ` *
+1. On Campus -> `  /OnCampus  ` *
 2. Ranking -> `  /Ranking  ` *
 3. Tags -> `  /Tags  ` *
 4. Random -> `  /Random  ` *
 5. Create -> `  /Create  ` *
 6. About -> `  /About  ` *
+
+
+### 5. Modules
+1. Moment.js
+2. GraphicsMagick

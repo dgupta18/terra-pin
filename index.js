@@ -179,7 +179,7 @@ app.delete('/pin/:name', function (req, res) {
 
 // API: delete, del review
 app.delete('/pin/:name/review/last', function (req, res) {
-    // Delete last review
+// Delete last review
 
 });
 
@@ -393,8 +393,6 @@ app.get("/api/Random", function(req,res){
 
   res.json(rand);
 })
-
-
 
 // ************* ABOUT *************
 // NAV: About
