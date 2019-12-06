@@ -249,16 +249,6 @@ app.get("/api/Tags/:subgroup", function (req, res) {
 
 
 
-// ************* USERS *************
-app.get("/api/Users", function (req, res) {
-  var users = new Set();
-  _.each(_DATA, function (elem) {
-    users.add(elem.user);
-  })
-
-  res.json(Array.from(users));
-})
-
 
 
 // ************* ON/OFF CAMPUS *************
@@ -354,23 +344,23 @@ app.get("/About", function (req, res) {
 
 
 
-// ************* SEARCH *************
-app.get("/search/:query", function(req,res){
-  var _query = req.params.query.toLowerCase();
-  var retArr = [];
+// // ************* SEARCH *************
+// app.get("/search/:query", function(req,res){
+//   var _query = req.params.query.toLowerCase();
+//   var retArr = [];
 
-  console.log("QUERY: " + _query)
+//   console.log("QUERY: " + _query)
 
-  _.each(_DATA, function(elem){
-    if (elem.name.toLowerCase().startsWith(_query)) {
-      retArr.push(elem);
-    }
-  })
+//   _.each(_DATA, function(elem){
+//     if (elem.name.toLowerCase().startsWith(_query)) {
+//       retArr.push(elem);
+//     }
+//   })
 
-  console.log(retArr);
+//   console.log(retArr);
 
-  res.send(retArr);
-})
+//   res.send(retArr);
+// })
 
 
 
