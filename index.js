@@ -114,25 +114,6 @@ app.post("/api/pin", function (req, res) {
         res.send("Pin added!")
     })
 
-    schema.GroupPins.findOne({ name: body.category }, function (err,group) {
-        if (err) throw err
-        if (!group) {
-            var newGroup = new schema.GroupPins({
-                name: body.category,
-                pins: [body.name]
-            });
-            newGroup.save(function(err) {
-                if (err) throw err
-                return res.send("GroupPins added!")
-            });
-        } else {
-            group.pins = groups.pins.concat([body.name])
-            group.save(function (err) {
-                if (err) throw err
-                return res.send("Pin added to GroupPins!")
-            });
-        }
-    });
 });
 
 // API: post, create review
@@ -146,7 +127,7 @@ app.post("/api/pin:name:review", function (req, res) {
             rating: parseInt(req.body.rating),
             comment: req.body.comment,
             author: req.body.author,
-            timestamp : //add timestamp
+            timestamp : 0 //add timestamp
         }
         pin.reviews = pin.reviews.concat([review])
         pin.save(function (err) {
@@ -169,7 +150,7 @@ app.delete('/pin/:name', function (req, res) {
         res.send("Deleted")
     })
 
-    schema.GroupPins.update({ name: category }, { $pull: { pins: [req.params.name] } } );
+    //schema.GroupPins.update({ name: category }, { $pull: { pins: [req.params.name] } } );
 });
 
 // API: delete, del review
@@ -179,64 +160,24 @@ app.delete('/pin/:name/review/last', function (req, res) {
 });
 
 
-// ************* CATEGORIES *************
-// NAV: Categories 
-app.get("/Category", function (req, res) {
-    var categories = dataUtil.getAllCategories(_DATA); //need to impl this function
-    console.log(categories);
-    var category = true;
+// // ************* CATEGORIES *************
+// // NAV: Categories 
+// app.get("/Category", function (req, res) {
+//     var categories = dataUtil.getAllCategories(_DATA); //need to impl this function
+//     console.log(categories);
+//     var category = true;
 
-    console.log(category);
+//     console.log(category);
 
-    res.render('home', {
-        data: categories,
-        filter: "Category",
-        navitem: true,
-        onHome: false,
-        onCreate: false,
-        category: category
-    });
-});
-
-// NAV: Categories - specific category
-app.get("/Category/:subgroup", function (req, res) {
-    var retArr = [];
-    var _subgroup = req.params.subgroup;
-
-    _.each(_DATA, function (elem) {
-        if (elem.category === _subgroup) {
-            retArr.push(elem);
-        }
-    })
-
-    res.render('home', {
-        data: retArr,
-        filter: _subgroup,
-        onHome: false,
-        onCreate: false
-    });
-});
-
-// API: get, get categories
-app.get("/api/Category", function (req, res) {
-    var categories = dataUtil.getAllCategories(_DATA);
-    res.json(categories);
-});
-
-// API: get, get specific given category
-app.get("/api/Category/:subgroup", function (req, res) {
-    var _subgroup = req.params.subgroup;
-    var retArr = [];
-
-    _.each(_DATA, function (elem) {
-        if (elem.category === _subgroup) {
-            retArr.push(elem);
-        }
-    })
-
-    res.json(retArr);
-});
-
+//     res.render('home', {
+//         data: categories,
+//         filter: "Category",
+//         navitem: true,
+//         onHome: false,
+//         onCreate: false,
+//         category: category
+//     });
+// });
 
 
 // ************* TAGS *************
@@ -298,16 +239,6 @@ app.get("/api/Tags/:subgroup", function (req, res) {
 });
 
 
-
-// ************* USERS *************
-app.get("/api/Users", function (req, res) {
-  var users = new Set();
-  _.each(_DATA, function (elem) {
-    users.add(elem.user);
-  })
-
-  res.json(Array.from(users));
-})
 
 
 
@@ -404,23 +335,23 @@ app.get("/About", function (req, res) {
 
 
 
-// ************* SEARCH *************
-app.get("/search/:query", function(req,res){
-  var _query = req.params.query.toLowerCase();
-  var retArr = [];
+// // ************* SEARCH *************
+// app.get("/search/:query", function(req,res){
+//   var _query = req.params.query.toLowerCase();
+//   var retArr = [];
 
-  console.log("QUERY: " + _query)
+//   console.log("QUERY: " + _query)
 
-  _.each(_DATA, function(elem){
-    if (elem.name.toLowerCase().startsWith(_query)) {
-      retArr.push(elem);
-    }
-  })
+//   _.each(_DATA, function(elem){
+//     if (elem.name.toLowerCase().startsWith(_query)) {
+//       retArr.push(elem);
+//     }
+//   })
 
-  console.log(retArr);
+//   console.log(retArr);
 
-  res.send(retArr);
-})
+//   res.send(retArr);
+// })
 
 
 
