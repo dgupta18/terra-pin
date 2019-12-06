@@ -1,14 +1,16 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-var http = require('http');
 var dotenv = require('dotenv').config();
 var logger = require('morgan');
 var exphbs = require('express-handlebars');
-var dataUtil = require("./data-util");
+// var dataUtil = require("./data-util");
 var _ = require("underscore");
 var schema = require('./models/Schema');
 
+
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 // Connect to MongoDB
 //console.log(process.env)
@@ -22,7 +24,7 @@ mongoose.connection.on('error', function () {
 
 // var _DATA = dataUtil.loadData().terraPins;
 //dotenv.load();
-var _DATA = {}
+// var _DATA = {}
 var app = express();
 
 app.use(logger('dev'));
@@ -32,14 +34,22 @@ app.engine('handlebars', exphbs({ defaultLayout: 'main', partialsDir: "views/par
 app.set('view engine', 'handlebars');
 app.use('/public', express.static('public'));
 
-/* Add whatever endpoints you need! Remember that your API endpoints must
- * have '/api' prepended to them.
- */
-//Schema models
 
+var Pin = require('./models/Schema');
+
+/* Add whatever endpoints you need! Remember that your API endpoints must
+ * have '/api' prepended to them. Please remember that you need at least 5
+ * endpoints for the API, and 5 others.
+ */
 
 // NAV: home page
+
+
 app.get('/',function(req,res){
+    Pins.find({}, function(err, pins) {
+        // res.render(<handlebarspage>, <variableNameForData: actualData>)
+        return res.render('pins', { data: pins });
+    });
     res.render('home', {
         data: _DATA,
         onHome: true,
@@ -48,24 +58,11 @@ app.get('/',function(req,res){
 
 // API: get, get raw data
 app.get('/api/getTerraPins', function(req,res){
-    res.json(_DATA)
+    res.json(Pins.find())
 });
 
 
-/**** Get all pins */
-app.get("/pins", function(params) {
-    console.log(schema.Pin)
-    schema.Pin.find({}, function(err, pins) {
-        if (err) {
-            console.log(err)
-            throw err;
-        }
-        else {
-            console.log("Not an error")
-            res.send(pins);
-        }
-    });
-})
+
 // ************* CREATE *************
 // NAV: create pin (render)
 app.get("/create", function (req, res) {
@@ -90,11 +87,9 @@ app.post("/create", function (req, res) {
         reviews: []
     })
 
-    console.log(pin)
-
     pin.save(function (err) {
-        if (err) throw err;
-        return res.send("Pin added!")
+        if (err) throw err
+        // res.send("Pin added!")
     })
 
     res.redirect("/");
@@ -203,7 +198,6 @@ app.get("/Category", function (req, res) {
         category: category
     });
 });
-
 
 // NAV: Categories - specific category
 app.get("/Category/:subgroup", function (req, res) {
@@ -434,6 +428,6 @@ app.get("/search/:query", function(req,res){
 
 
 // ************* SETUP *************
-app.listen(process.env.PORT || 3000, function() {
-    console.log('Listening on port 3000!');
+http.listen(3000, function() {
+    console.log('Example app listening on port 3000!');
 });
