@@ -7,6 +7,8 @@ var exphbs = require('express-handlebars');
 var dataUtil = require("./data-util");
 var _ = require("underscore");
 var schema = require('./models/Schema');
+var moment = require('moment');
+
 
 
 // var http = require('http').Server(app);
@@ -117,6 +119,7 @@ app.post("/api/pin", function (req, res) {
 app.post("/api/create/pin/:name/review", function (req, res) {
     var body = req.body;
 
+    // add a review to a pin
     schema.Pin.findOne({ name: req.params.name }, function (err, currPin) {
         if (err) throw err
         if (!currPin) return res.send("No pin of name given exists")
@@ -125,14 +128,21 @@ app.post("/api/create/pin/:name/review", function (req, res) {
             rating: parseInt(req.body.rating),
             comment: req.body.comment,
             author: req.body.author,
-            timestamp : 0//add timestamp
+            timestamp : moment().format('LLL')
         }
         currPin.reviews = currPin.reviews.concat([review])
         currPin.save(function (err) {
             if (err) throw err
             return res.send("pin review added!")
         })
+
+
+        // save new pin avg rating
+    
     });
+
+
+
 });
 
 
@@ -305,22 +315,35 @@ app.get("/api/Ranking", function(req,res){
 
 // ************* RANDOM *************
 // NAV: Random
-app.get("/Random", function (req, res) {
-  var rand = _DATA[Math.floor(Math.random() * _DATA.length)];
 
-  res.render('home', {
-    data: [rand],
-    filter: "Random",
-    onHome: false,
-    onCreate: false,
-  });
+app.get("/Random", function (req, res) {
+    // var rand = _DATA[Math.floor(Math.random() * _DATA.length)];
+    schema.Pin.findOneRandom(function(err, result) {
+        if (!err) {
+            res.render('home', {
+                data: [result],
+                filter: "Random",
+                onHome: false,
+                onCreate: false,
+              });
+        } else {
+            res.send("No Pins available");
+        }
+      });
+
 });
 
 // API: get, get random pin
 app.get("/api/Random", function(req,res){
-  var rand = _DATA[Math.floor(Math.random() * _DATA.length)];
 
-  res.json(rand);
+    schema.Pin.findOneRandom(function(err, result) {
+        if (!err) {
+          console.log(result); // 1 element
+          res.json(result)
+        } else {
+            res.send("No Pins available");
+        }
+      });
 })
 
 // ************* ABOUT *************
@@ -339,23 +362,23 @@ app.get("/About", function (req, res) {
 
 
 
-// // ************* SEARCH *************
-// app.get("/search/:query", function(req,res){
-//   var _query = req.params.query.toLowerCase();
-//   var retArr = [];
+// ************* SEARCH *************
+app.get("/search/:query", function(req,res){
+  var _query = req.params.query.toLowerCase();
+  var retArr = [];
 
-//   console.log("QUERY: " + _query)
+  console.log("QUERY: " + _query)
 
-//   _.each(_DATA, function(elem){
-//     if (elem.name.toLowerCase().startsWith(_query)) {
-//       retArr.push(elem);
-//     }
-//   })
+  _.each(_DATA, function(elem){
+    if (elem.name.toLowerCase().startsWith(_query)) {
+      retArr.push(elem);
+    }
+  })
 
-//   console.log(retArr);
+  console.log(retArr);
 
-//   res.send(retArr);
-// })
+  res.send(retArr);
+})
 
 
 

@@ -1,5 +1,9 @@
 var mongoose = require('mongoose');
 
+// NPM MODULE to find random documents
+var random = require('mongoose-simple-random');
+
+
 var reviewSchema = new mongoose.Schema({
     rating: {
         type: Number,
@@ -62,6 +66,7 @@ pinSchema.add({
     recommendations: [recommendationSchema]
 });
 
+pinSchema.plugin(random);
 
 
 var Recommendation = mongoose.model('Recommendation', recommendationSchema)
