@@ -1,7 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-var dotenv = require('dotenv');
+var dotenv = require('dotenv').config();
 var logger = require('morgan');
 var exphbs = require('express-handlebars');
 var dataUtil = require("./data-util");
@@ -9,15 +9,17 @@ var _ = require("underscore");
 var schema = require('./models/Schema');
 
 // Connect to MongoDB
-console.log(process.env.MONGODB)
-mongoose.connect(process.env.MONGODB);
+//console.log(process.env)
+console.log(process.env.MONGODB,)
+mongoose.Promise = global.Promise
+mongoose.connect(process.env.MONGODB, { useNewUrlParser: true , useUnifiedTopology: true});
 mongoose.connection.on('error', function () {
     console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
     process.exit(1);
 });
 
 // var _DATA = dataUtil.loadData().terraPins;
-dotenv.load();
+//dotenv.load();
 var _DATA = {}
 var app = express();
 
