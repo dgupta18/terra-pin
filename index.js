@@ -80,7 +80,7 @@ app.get("/createReview", function(req,res){
     })
 })
 
-app.get("/createReccomendation", function(req,res){
+app.get("/createRecommendation", function(req,res){
     res.render('createRec', {
         onHome: false
     })
