@@ -75,15 +75,40 @@ app.get("/create", function (req, res) {
 });
 
 app.get("/createReview", function(req,res){
-    res.render('createReview', {
-        onHome: false
-    })
+    schema.Pin.find({}, function (err, pins) {
+        console.log(pins)
+        if (err) throw err;
+        //add, using jquery, the options
+        // <option value=""></option>
+        var locations = []
+        pins.forEach(function (pin) {
+            locations.push(pin.name);
+        });
+
+        res.render('createReview', {
+            locations: locations,
+            onHome: false
+        });
+    });
 })
 
 app.get("/createRecommendation", function(req,res){
-    res.render('createRec', {
-        onHome: false
-    })
+    schema.Pin.find({}, function (err, pins) {
+        console.log(pins)
+        if (err) throw err;
+        //add, using jquery, the options
+        // <option value=""></option>
+        var locations = []
+        pins.forEach(function (pin) {
+            locations.push(pin.name);
+        });
+
+        res.render('createRec', {
+            locations: locations,
+            onHome: false
+        })
+    });
+    
 })
 
 // NAV: create pin (post req)
@@ -199,6 +224,44 @@ app.delete('/api/delete/pin/:name/lastreview', function (req, res) {
 
 
 // ************* RECOMMENDATIONS *************
+app.post('/createRecommendation', function(req,res){
+    var body = req.body
+
+
+     schema.Pin.findOne({ name: body.recLocation }, function (err, currPin) {
+
+        if (err) throw err
+        if (!currPin) return res.send("No pin of name given exists")
+
+
+        schema.Pin.findOne({name: body.recLocationFor}, function (err, currPinFor) {
+            var recommendation = {
+                user: body.user,
+                location: currPin.name,
+                reason: body.reason
+            }
+
+            currPinFor.recommendations = currPinFor.recommendations.concat([recommendation])
+            currPinFor.save(function(err) {
+                if (err) throw err
+                if (!currPinFor) return res.send("No pin of name given exists")
+
+                console.log("currPinFor: " + currPinFor)
+                return res.redirect("/")
+            })
+        })
+        
+    })
+    //     currPinFor.recommendations = currPinFor.recommendations.concat([recommendation])
+    //     currPinFor.save(function (err) {
+    //         if (err) throw err
+    //         return res.send("pin recommendation added!")
+    //     })
+    // });
+
+    // res.redirect("/");
+})
+
 app.post('/api/create/pin/recommendation/:for/:of', function (req, res) {
     schema.Pin.findOne({ name: req.params.for }, function (err, currPinFor) {
 

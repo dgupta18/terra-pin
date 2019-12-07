@@ -5,25 +5,32 @@ user: String
 }
 <article id="form">
     {{!-- TODO: SEND THIS VARIABLE --}}
-    <h1>Add a recommendation for {{place}}</h1>
+    <h1>Add a recommendation!</h1>
     {{!-- TODO: add createRec endpoint --}}
-    <form id="createForm" method="POST" action=/createRec>
+    <form id="createForm" method="POST" action=/createRecommendation>
         <div class="input-field">
             <label>Recommendation location:</label><br>
             {{!-- Populate with dropdownlist of names from database --}}
-            <script>
-                Movie.find({}, function(err, movies) {
-                    if (err) throw err;
-                    //add, using jquery, the options
-                    // <option value=""></option>
-                });
-            </script>
-            <select id="recLocation"></select>
+            <select name="recLocation">
+                {{#each locations}}
+                    <option value="{{this}}">{{this}}</option>
+                {{/each}}
+            </select>            
+        </div>
+        <div id="space"></div>
+        <div class="input-field">
+            <label>This recommendation is for:</label><br>
+            {{!-- Populate with dropdownlist of names from database --}}
+            <select name="recLocationFor">
+                {{#each locations}}
+                    <option value="{{this}}">{{this}}</option>
+                {{/each}}
+            </select>
         </div>
         <div id="space"></div>
         <div class="input-field">
             <label>Your name:</label><br>
-            <input type="text" name="author" size="50" placeholder="ex: Tiff">
+            <input type="text" name="user" size="50" placeholder="ex: Tiff">
         </div>
         <div id="space"></div>
         <div class="input-field">
