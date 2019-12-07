@@ -8,15 +8,11 @@ var dataUtil = require("./data-util");
 var _ = require("underscore");
 var schema = require('./models/Schema');
 var moment = require('moment');
-// exphbs.registerHelper('times', function(n, block) {
-//     var accum = '';
-//     n = parseInt(n)
-//     for(var i = 0; i < n; ++i)
-//         accum += block.fn(i);
-//     return accum;
-// });
-// var http = require('http').Server(app);
-// var io = require('socket.io')(http);
+
+
+
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 // Connect to MongoDB
 console.log(process.env.MONGODB)
@@ -89,13 +85,14 @@ app.post("/create", function (req, res) {
 
     var pin = new schema.Pin({
         name: body.name,
+        description: body.description,
         onCampus: body.onCampus === "true",
+        image: body.image,
         tags: body.tags.toString().split(" "),
         user: body.user,
-        image: body.image,
-        description: body.description,
-        recommendations: [],
-        reviews: []
+        avgRating: 0,
+        reviews: [],
+        recommendations: []
     })
 
     pin.save(function (err) {
@@ -108,7 +105,7 @@ app.post("/create", function (req, res) {
 
 //DONE
 // API: post, create pin
-app.post("/api/pin", function (req, res) {
+app.post("/api/create/pin", function (req, res) {
     var body = req.body;
 
     var pin = new schema.Pin({
@@ -118,6 +115,7 @@ app.post("/api/pin", function (req, res) {
         image: body.image,
         tags: body.tags.toString().split(" "),
         user: body.user,
+        avgRating: 0,
         reviews: [],
         recommendations: []
     })
@@ -125,6 +123,7 @@ app.post("/api/pin", function (req, res) {
 
     pin.save(function (err) {
         if (err) throw err
+        io.emit('new pin', pin);
         res.send("Pin added!")
     })
 });
@@ -143,18 +142,28 @@ app.post("/api/create/pin/:name/review", function (req, res) {
             rating: parseInt(req.body.rating),
             comment: req.body.comment,
             author: req.body.author,
-            timestamp : moment().format('LLL')
+            timeCreated : moment().format('LLL').toString()
         }
+        console.log('moment: ' + moment().format('LLL'));
         currPin.reviews = currPin.reviews.concat([review])
+        
+    // save new pin avg rating
+        var newAvgRating = (currPin.avgRating*(currPin.reviews.length-1)) + parseInt(req.body.rating)
+        console.log(currPin)
+        newAvgRating /= currPin.reviews.length
+        
+        currPin.avgRating = newAvgRating
         currPin.save(function (err) {
             if (err) throw err
-            return res.send("pin review added!")
+            console.log("pin rating updated")
+            console.log(currPin.avgRating)
+            return res.send("pin rating updates")
         })
+<<<<<<< HEAD
         // save new pin avg rating
+=======
+>>>>>>> 4710ff84022bb7a330604dbe1b9c742b47c792d9
     });
-
-
-
 });
 
 
@@ -173,11 +182,16 @@ app.delete('/api/delete/pin/:name', function (req, res) {
 });
 
 // API: delete, del review
-app.delete('/pin/:name/review/last', function (req, res) {
-    var name = req.params.name
-
-
+app.delete('/api/delete/pin/:name/lastreview', function (req, res) {
+    schema.Pin.updateOne({ name: req.params.name }, { $pop: { reviews: 1 } }, function(err, unknown){
+        if (err) throw err
+        return res.send("deleted last review from pin!")
+    })
 });
+
+
+
+
 
 // ************* RECOMMENDATIONS *************
 app.post('/api/create/pin/recommendation/:for/:of', function (req, res) {
@@ -223,7 +237,7 @@ app.get("/Tags", function(req,res){
             onHome: false,
             onCreate: false,
             tag: true
-          });
+        });
     })
 });
 
@@ -397,6 +411,20 @@ app.get("/search/:query", function(req,res){
 
 
 // ************* SETUP *************
-app.listen(3000, function() {
+// app.listen(3000, function() {
+//     console.log('Example app listening on port 3000!');
+// });
+
+
+// To know if users are connected
+io.on('connection', function(socket) {
+    console.log('NEW connection.');
+    socket.on('disconnect', function(){
+        console.log('Oops. A user disconnected.');
+  });
+});
+
+
+http.listen(3000, function() {
     console.log('Example app listening on port 3000!');
 });

@@ -19,7 +19,7 @@ var reviewSchema = new mongoose.Schema({
         required: true
     },
     timeCreated: {
-        type: String
+        type: String,
     }
 });
 

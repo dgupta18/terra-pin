@@ -3,8 +3,6 @@
 
 <head>
   <meta charset="UTF-8">
-  <link href="https://fonts.googleapis.com/css?family=Solway&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="/public/css/main.css">
   <title>TerraPin</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
@@ -17,14 +15,75 @@
 
 <body>
   {{!-- where the pins will be displayed --}}
-  <div id="left">
+  <div id="center">
     {{{body}}}
   </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+  <script>
+    var socket = io(); 
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
-  {{!-- <script>
-    var socket = io();
-  </script> --}}
+    // TODO ADD SOCKET STUFF FOR WHEN YOU CREATE A NEW PIN
+    {{!-- $('#submitPin').submit(function(){ //When send button is pressed
+            socket.emit('new pin', $('#m').val())
+            $('#m').val('');
+            return false; //Ensures the page does not reload
+        });
+        //Task 1 - Step 2: Listen for message from server when some client created a new card and update HTML page
+        socket.on('new pin', function(msg) {
+
+          // TODO ADD THE CARD
+            $('#left').append(card);
+        }); --}}
+
+        //Task 2 - Step 1: Send a POST request when client has completed and submitted new movie form
+        $('#form').submit(function() { //When "post" button is pressed
+            // capture the data
+            var name = $("input[name='name']").val()
+            var onCampus = $("input[name='onCampus']").val() === true
+            var tags = $("input[name='onCampus']").val().toString().split(" ") 
+            var user = $("input[name='user']").val()
+            var image = $("input[name='image']").val()
+            var description = $("input[name='description']").val()
+
+            // clear the fields
+            $("input[name='name']").val(""),
+            $("input[name='onCampus']").val("")
+            $("input[name='onCampus']").val("")
+            $("input[name='user']").val("")
+            $("input[name='image']").val("")
+            $("input[name='description']").val("")
+      
+            $.ajax({
+                type: "POST",
+                url: '/create',
+                data: {
+                    name: name,
+                    description: description
+                    onCampus: onCampus,
+                    image: image,
+                    tags: tags,
+                    avgRating: 0,
+                    reviews: [],
+                    recommendation:[]
+                },
+                sucess: function(data, status) {
+                    console.log(data);
+                }
+            });
+            return false; //Ensures the page does not reload
+        });
+
+        //Task 2 - Step 2: Listen for message from server when some client creates a new pin
+        socket.on('new pin', function(mov) {
+
+          // TO-DO ADD THE STYLING FOR A NEW CARD
+
+            $('#left').append($('<li>').text(mov.title + ': ' + mov.genre));
+        })
+
+
+  </script>
 </body>
 
 </html>

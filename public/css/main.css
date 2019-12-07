@@ -56,7 +56,7 @@ body {
 
 
 /********* MAIN.HANDLEBARS *********/
-#left {
+#center {
     /* float: left; */
     margin-left: auto;
     width: 75%;
