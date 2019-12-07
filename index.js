@@ -150,10 +150,7 @@ app.post("/api/create/pin/:name/review", function (req, res) {
             if (err) throw err
             return res.send("pin review added!")
         })
-
-
         // save new pin avg rating
-    
     });
 
 
@@ -200,22 +197,6 @@ app.post('/api/create/pin/recommendation/:for/:of', function (req, res) {
             if (err) throw err
             return res.send("pin recommendation added!")
         })
-        
-        // schema.Pin.findOne({ name : req.params.of}, function(err, currPinnOf ){
-        //     if (err) throw err
-        //     if (!currPinnOf) return res.send("No pin found to recommend")
-            
-        //     var recommendation = {
-        //         user: req.body.user,
-        //         location: currPinnOf,
-        //         reason: req.body.reason,
-        //     }
-        //     currPinFor.recommendations = currPinFor.recommendations.concat([recommendation])
-        //     currPinFor.save(function (err) {
-        //         if (err) throw err
-        //         return res.send("pin recommendation added!")
-        //     });
-        // });
     });
 });
 
@@ -227,7 +208,9 @@ app.get("/Tags", function(req,res){
     var tagSet = new Set();
     schema.Pin.find({}, function(err, pinGroup){
         if (err) throw err
+
         _.each(pinGroup, function(pin){
+            console.log(pin.tags)
             _.each(pin.tags, function(tag){
                 tagSet.add(tag)
             })
@@ -247,7 +230,8 @@ app.get("/Tags", function(req,res){
 // NAV: Tags - specific tag
 app.get("/Tags/:tag", function (req, res) {
     var tag = req.params.tag;
-    schema.Pin.find({tags: [tag]}, function(err, pins) {
+    schema.Pin.find({tags: tag}, function(err, pins) {
+        console.log(pins)
         res.render('home', {
             data: pins,
             filter: tag,
@@ -274,7 +258,6 @@ app.get("/api/Tags", function (req, res) {
 // API: get, get specific given tag
 app.get("/api/Tags/:tag", function (req, res) {
     var tag = req.params.tag;
-
     schema.Pin.find({tags: [tag]}, function(err, pins) {
         res.json(pins);
     })

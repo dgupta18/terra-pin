@@ -185,6 +185,24 @@ span {
     padding-bottom: 8px;
 }
 
+a {
+    color: #470063;
+    /* background-color: #8CB1D1; */
+}
+
+
+
+#recommendation {
+    height:100px;
+    width:150px;
+    background-color:#8CB1D1;
+    margin-right:20px;
+    margin-bottom: 10px;
+    padding:10px;
+    outline:2px;
+    outline-color: #001020;
+}
+
 /******** CREATE.HANDLEBARS ********/
 #submitPin {
     color: #001020;
