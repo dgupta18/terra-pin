@@ -41,17 +41,34 @@
                     <a href="/createReview" style="float:right;">Add a Review</a>
                 </div>
                 {{!-- DISPLAYING REVIEWS --}}
-                {{#each data.reviews}}
-                    <div class="left-right">
-                        <p style="float:left;">{{this.author}}</p>
-                        <div id="star-rating">
-                            {{#times this.rating}}
-                                <span class="fa fa-star checked"></span>
-                            {{/times}}
+                <div class="reviews" style="overflow: scroll; max-height: 170px;">
+                    {{#each reviews}}
+                    <div id="review" style="padding-left:20px;padding-right:20px;">
+                        <div class="left-right" style="padding-top:10px;">
+                            <p style="float:left;margin:0;font-weight:800;">{{this.author}}</p>
+                            <div id="star-rating">
+                                {{#times this.rating}}
+                                    <span class="fa fa-star checked"></span>
+                                {{/times}}
+                            </div>
                         </div>
+                        <p class="pinInfo">{{this.comment}}</p>
+                        <div style="border-top: 1px solid #2E577C;"></div>
+                        </div>
+                    {{/each}}
+                </div>
+                <div class="left-right" style="padding-top:15px;">
+                    <span class="pinInfo" style="float:left;">Love this place? Check out more: </span>
+                    <a href="/createReccomendation" style="float:right;">Add a Recommendation</a>
+                </div>
+                <div class="recs" style="overflow-y: auto; overflow-x: hidden;">
+                {{#each recommendations}}
+                    <div id="recommendation">
+                        <p>{{this.location}}</p>
+                        <p style="font-size:12px">{{this.reason}}</p>
                     </div>
-                    <div style="border-top: 1px solid #2E577C; padding-bottom:10px;"></div>
                 {{/each}}
+                </div>
 
                 <div style="border-top: 1px solid #2E577C; padding-bottom:10px;"></div>
                 {{!-- <span id="pinTags" class="pinInfo">Tags:</span> --}}
