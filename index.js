@@ -4,12 +4,9 @@ var mongoose = require('mongoose');
 var dotenv = require('dotenv').config();
 var logger = require('morgan');
 var exphbs = require('express-handlebars');
-var dataUtil = require("./data-util");
 var _ = require("underscore");
 var schema = require('./models/Schema');
 var moment = require('moment');
-
-
 
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -44,17 +41,16 @@ app.engine('handlebars', exphbs({ defaultLayout: 'main', partialsDir: "views/par
 app.set('view engine', 'handlebars');
 app.use('/public', express.static('public'));
 
-
 /* Add whatever endpoints you need! Remember that your API endpoints must
  * have '/api' prepended to them. Please remember that you need at least 5
  * endpoints for the API, and 5 others.
  */
 
 // NAV: home page
-
-
 app.get('/',function(req,res){
+    console.log("in /")
     schema.Pin.find({}, function(err, pins) {
+        console.log("in schema find");
         // res.render(<handlebarspage>, <variableNameForData: actualData>)
         return res.render('home', { data: pins });
     });
@@ -97,7 +93,8 @@ app.post("/create", function (req, res) {
 
     pin.save(function (err) {
         if (err) throw err;
-        //return res.send("Pin added!")
+        io.emit('new pin', pin);
+        return res.send("Pin added!")
     })
 
     res.redirect("/");
@@ -147,7 +144,7 @@ app.post("/api/create/pin/:name/review", function (req, res) {
         console.log('moment: ' + moment().format('LLL'));
         currPin.reviews = currPin.reviews.concat([review])
         
-    // save new pin avg rating
+        // save new pin avg rating
         var newAvgRating = (currPin.avgRating*(currPin.reviews.length-1)) + parseInt(req.body.rating)
         console.log(currPin)
         newAvgRating /= currPin.reviews.length
@@ -433,7 +430,6 @@ io.on('connection', function(socket) {
         console.log('Oops. A user disconnected.');
   });
 });
-
 
 http.listen(3000, function() {
     console.log('Example app listening on port 3000!');

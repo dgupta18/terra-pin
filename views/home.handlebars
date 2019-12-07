@@ -1,5 +1,6 @@
+
 {{#if filter}}
-<h2 style="margin-left: 10px">Explore: {{this.filter}}</h2>
+    <h2 style="margin-left: 10px">Explore: {{this.filter}}</h2>
 {{/if}}
 
 {{#if tag}}
@@ -57,26 +58,6 @@
                     {{#each this.tags}}
                             <a href="/Tags/{{this}}" id="groupDisp">{{this}}</a>
                     {{/each}}
-            {{!-- display picture --}}
-            {{!-- <span id="displayLeft">
-                <div class="center-cropped" 
-                    style="background-image: url({{this.image}});">
-                </div>
-            </span>
-            {{!-- display other info --}}
-            {{!-- <span id="displayRight">
-                <span id="pinName">{{this.name}}</span>
-                <div id="space"></div>
-                <span class="pinInfo">Uploaded by: {{this.user}}</span>
-                <div id="space"></div>
-
-                <span class="pinInfo">Ranking: {{this.ranking}}</span>
-                <div id="space"></div>
-                <span id="pinTags" class="pinInfo">Tags:</span>
-                <div id="space"></div>
-                    {{#each this.tags}}
-                            <a href="/Tag/{{this}}" id="groupDisp">{{this}}</a>
-                    {{/each}}
         </article>
         <br>
         {{else}}
@@ -85,4 +66,3 @@
         </article>
     {{/each}}
 {{/unless}}
-

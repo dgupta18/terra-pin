@@ -14,37 +14,37 @@
 </div>
 
 <body>
-  {{!-- where the pins will be displayed --}}
-  <div id="center">
-    {{{body}}}
-  </div>
+    {{!-- where the pins will be displayed --}}
+    <div id="center">
+        {{{body}}}
+    </div>
+
     <script src="/socket.io/socket.io.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
-  <script>
-    var socket = io(); 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.0/jquery.js"></script>
+    <script>
+        var card = require("./models/cardify");
 
-    // TODO ADD SOCKET STUFF FOR WHEN YOU CREATE A NEW PIN
-    {{!-- $('#submitPin').submit(function(){ //When send button is pressed
-            socket.emit('new pin', $('#m').val())
-            $('#m').val('');
-            return false; //Ensures the page does not reload
-        });
-        //Task 1 - Step 2: Listen for message from server when some client created a new card and update HTML page
-        socket.on('new pin', function(msg) {
+        console.log("in script in main")
+        var socket = io(); 
 
-          // TODO ADD THE CARD
-            $('#left').append(card);
-        }); --}}
+        // capture the data
+        var name = ""
+        var onCampus = false
+        var tags = []
+        var user = ""
+        var image = ""
+        var description = ""
 
         //Task 2 - Step 1: Send a POST request when client has completed and submitted new movie form
         $('#form').submit(function() { //When "post" button is pressed
-            // capture the data
-            var name = $("input[name='name']").val()
-            var onCampus = $("input[name='onCampus']").val() === true
-            var tags = $("input[name='onCampus']").val().toString().split(" ") 
-            var user = $("input[name='user']").val()
-            var image = $("input[name='image']").val()
-            var description = $("input[name='description']").val()
+
+            // grab data from fields
+            name = $("input[name='name']").val()
+            onCampus = $("input[name='onCampus']").val() === true
+            tags = $("input[name='onCampus']").val().toString().split(" ")
+            user = $("input[name='user']").val()
+            image = $("input[name='image']").val()
+            description = $("input[name='description']").val()
 
             // clear the fields
             $("input[name='name']").val(""),
@@ -53,7 +53,7 @@
             $("input[name='user']").val("")
             $("input[name='image']").val("")
             $("input[name='description']").val("")
-      
+
             $.ajax({
                 type: "POST",
                 url: '/create',
@@ -67,7 +67,7 @@
                     reviews: [],
                     recommendation:[]
                 },
-                sucess: function(data, status) {
+                success: function(data, status) {
                     console.log(data);
                 }
             });
@@ -75,15 +75,13 @@
         });
 
         //Task 2 - Step 2: Listen for message from server when some client creates a new pin
-        socket.on('new pin', function(mov) {
+        socket.on('new pin', function(pin) {
+            var new_card = card.cardify(pin)
+            console.log(new_card)
 
-          // TO-DO ADD THE STYLING FOR A NEW CARD
-
-            $('#left').append($('<li>').text(mov.title + ': ' + mov.genre));
+            $('#left').append(new_card);
         })
-
-
-  </script>
+    </script>
 </body>
 
 </html>
