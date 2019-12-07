@@ -70,9 +70,21 @@ app.get('/api/getTerraPins', function(req,res){
 app.get("/create", function (req, res) {
     res.render('create', {
         onCreate: true,
-        nHome: false
+        onHome: false
     });
 });
+
+app.get("/createReview", function(req,res){
+    res.render('createReview', {
+        onHome: false
+    })
+})
+
+app.get("/createReccomendation", function(req,res){
+    res.render('createRec', {
+        onHome: false
+    })
+})
 
 // NAV: create pin (post req)
 app.post("/create", function (req, res) {
@@ -156,10 +168,6 @@ app.post("/api/create/pin/:name/review", function (req, res) {
             console.log(currPin.avgRating)
             return res.send("pin rating updates")
         })
-<<<<<<< HEAD
-        // save new pin avg rating
-=======
->>>>>>> 4710ff84022bb7a330604dbe1b9c742b47c792d9
     });
 });
 
@@ -408,19 +416,19 @@ app.get("/search/:query", function(req,res){
 
 
 // ************* SETUP *************
-// app.listen(3000, function() {
-//     console.log('Example app listening on port 3000!');
-// });
+app.listen(3000, function() {
+    console.log('Example app listening on port 3000!');
+});
 
 
 // To know if users are connected
-io.on('connection', function(socket) {
-    console.log('NEW connection.');
-    socket.on('disconnect', function(){
-        console.log('Oops. A user disconnected.');
-  });
-});
+// io.on('connection', function(socket) {
+//     console.log('NEW connection.');
+//     socket.on('disconnect', function(){
+//         console.log('Oops. A user disconnected.');
+//   });
+// });
 
-http.listen(3000, function() {
-    console.log('Example app listening on port 3000!');
-});
+// http.listen(3000, function() {
+//     console.log('Example app listening on port 3000!');
+// });
