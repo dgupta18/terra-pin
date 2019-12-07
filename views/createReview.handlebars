@@ -8,6 +8,16 @@ timeCreated: String
     <h1>Rating for {{location}}</h1>
     <form id="createForm" method="POST" action=/createReview>
         <div class="input-field">
+            <label>Review for:</label><br>
+            {{!-- Populate with dropdownlist of names from database --}}
+            <select name="reviewLoc">
+                {{#each locations}}
+                <option value="{{this}}">{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+        <div id="space"></div>
+        <div class="input-field">
             <label>Rating (out of 5):</label><br>
             <input type="text" name="rating" size="50" placeholder="ex: 5">
         </div>

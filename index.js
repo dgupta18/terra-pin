@@ -123,7 +123,7 @@ app.post("/create", function (req, res) {
         image: body.image,
         tags: body.tags.toString().split(" "),
         user: body.user,
-        avgRating: 0,
+        avgRating: 3,
         reviews: [],
         recommendations: []
     })
@@ -131,7 +131,6 @@ app.post("/create", function (req, res) {
     pin.save(function (err) {
         if (err) throw err;
         io.emit('new pin', pin);
-        return res.send("Pin added!")
     })
 
     res.redirect("/");
@@ -149,7 +148,7 @@ app.post("/api/create/pin", function (req, res) {
         image: body.image,
         tags: body.tags.toString().split(" "),
         user: body.user,
-        avgRating: 0,
+        avgRating: 3,
         reviews: [],
         recommendations: []
     })
@@ -182,9 +181,9 @@ app.post("/api/create/pin/:name/review", function (req, res) {
         currPin.reviews = currPin.reviews.concat([review])
         
         // save new pin avg rating
-        var newAvgRating = (currPin.avgRating*(currPin.reviews.length-1)) + parseInt(req.body.rating)
+        var newAvgRating = (currPin.avgRating*(currPin.reviews.length)) + parseInt(req.body.rating)
         console.log(currPin)
-        newAvgRating /= currPin.reviews.length
+        newAvgRating /= (currPin.reviews.length+1)
         
         currPin.avgRating = newAvgRating
         currPin.save(function (err) {
@@ -195,6 +194,48 @@ app.post("/api/create/pin/:name/review", function (req, res) {
         })
     });
 });
+
+app.post('/createReview', function (req, res) {
+    var body = req.body
+
+    schema.Pin.findOne({ name: body.reviewLoc }, function (err, currPin) {
+
+        if (err) throw err
+        if (!currPin) return res.send("No pin of name given exists")
+
+        var review = schema.Review({
+            rating: parseInt(req.body.rating),
+            comment: req.body.comment,
+            author: req.body.user,
+            timeCreated: moment().format('LLL').toString()
+        })
+        console.log("user: " + req.body.user)
+        console.log("review: " + review)
+        console.log('moment: ' + moment().format('LLL'));
+        currPin.reviews = currPin.reviews.concat([review])
+
+        var newAvgRating = 0.0
+        // save new pin avg rating
+        if (isNaN(currPin.avgRating)) {
+            newAvgRating = req.body.rating
+        } else {
+            newAvgRating = (currPin.avgRating * (currPin.reviews.length)) + parseInt(req.body.rating)
+        }
+
+        newAvgRating /= (currPin.reviews.length + 1)
+        console.log("newAvgRating: " + newAvgRating)
+
+        currPin.avgRating = newAvgRating
+        currPin.save(function (err) {
+            if (err) throw err
+            console.log("pin rating updated")
+            console.log(currPin.avgRating)
+            return res.redirect("/")
+        })
+
+    })
+})
+
 
 
 
@@ -252,14 +293,6 @@ app.post('/createRecommendation', function(req,res){
         })
         
     })
-    //     currPinFor.recommendations = currPinFor.recommendations.concat([recommendation])
-    //     currPinFor.save(function (err) {
-    //         if (err) throw err
-    //         return res.send("pin recommendation added!")
-    //     })
-    // });
-
-    // res.redirect("/");
 })
 
 app.post('/api/create/pin/recommendation/:for/:of', function (req, res) {
@@ -384,17 +417,23 @@ app.get("/api/OffCampus", function (req, res) {
 // ************* RANKING *************
 // NAV: ranking
 app.get("/Ranking", function(req,res){
-  var retArr = _.clone(_DATA);
-  retArr.sort(function(b,a){
-    return a.ranking > b.ranking ? 1 : (a.ranking === b.ranking) ? ((a.name > b.name) ? 1 : -1) : -1 ;
-  });
+//   var retArr = _.clone(_DATA);
+    var retArr = []
+    schema.Pin.find({}, function(err,pins){
+        _.each(pins, function (elem) {
+            retArr.push(elem);
+        })
+        retArr.sort(function (b, a) {
+            return a.avgRating > b.avgRating ? 1 : (a.avgRating === b.avgRating) ? ((a.name > b.name) ? 1 : -1) : -1;
+        });
 
-  res.render('home', {
-    data: retArr,
-    filter: "Ranking",
-    onHome: false,
-    onCreate: false
-  });
+        res.render('home', {
+            data: retArr,
+            filter: "Ranking",
+            onHome: false,
+            onCreate: false
+        });
+    })    
 })
 
 // API: get, ranking
